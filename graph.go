@@ -22,7 +22,7 @@ type Vertex struct {
 // to the words which are a single letter away
 type Graph struct {
 	vertices []Vertex
-	edges    []Edge
+	adjList  [][]int
 }
 
 // LoadDictionary loads a dictionary file and constructs a graph connecting
@@ -43,13 +43,16 @@ func LoadDictionary(path string) *Graph {
 
 	g := Graph{
 		vertices: make([]Vertex, 0),
-		edges:    make([]Edge, 0),
 	}
 
 	// read the dictionary and for each word at it as a vertex in the graph.
 	for scanner.Scan() {
 		word := scanner.Text()
 		g.vertices = append(g.vertices, Vertex{strings.ToLower(word)})
+	}
+	g.adjList = make([][]int, len(g.vertices))
+	for i := range g.adjList {
+		g.adjList[i] = make([]int, 0)
 	}
 
 	// for each word, find words which are only one letter different
@@ -58,7 +61,8 @@ func LoadDictionary(path string) *Graph {
 		cWord := g.vertices[i].word
 		for j := i + 1; j < len(g.vertices); j++ {
 			if distance(cWord, g.vertices[j].word) == 1 {
-				g.edges = append(g.edges, Edge{i, j})
+				g.adjList[i] = append(g.adjList[i], j)
+				g.adjList[j] = append(g.adjList[j], i)
 			}
 		}
 	}
@@ -162,24 +166,7 @@ func smallestDistance(vSet map[int]struct{}, dist []int) int {
 }
 
 func (g *Graph) getAdjacent(v int) []int {
-	adj := make(map[int]struct{})
-	for _, e := range g.edges {
-		if e.a == v {
-			adj[e.b] = struct{}{}
-		} else if e.b == v {
-			adj[e.a] = struct{}{}
-		}
-	}
-
-	adjList := make([]int, len(adj))
-
-	i := 0
-	for k := range adj {
-		adjList[i] = k
-		i++
-	}
-
-	return adjList
+	return g.adjList[v]
 }
 
 func distance(w1, w2 string) int {
