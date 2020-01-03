@@ -89,17 +89,18 @@ func (g *Graph) Find(word string) int {
 func (g *Graph) Path(v1, v2 int) []int {
 	dist := make([]int, len(g.vertices))
 	prev := make([]int, len(g.vertices))
-	vSet := make(map[int]struct{})
+	vSet := make([]bool, len(g.vertices))
+	vSetSize := len(vSet)
 
 	for i := range g.vertices {
 		dist[i] = math.MaxInt64
 		prev[i] = math.MaxInt64
-		vSet[i] = struct{}{}
+		vSet[i] = true
 	}
 
 	dist[v1] = 0
 
-	for len(vSet) > 0 {
+	for vSetSize > 0 {
 		// find vertex, `u`, in vSet with the smallest distance
 		u := smallestDistance(vSet, dist)
 
@@ -109,7 +110,9 @@ func (g *Graph) Path(v1, v2 int) []int {
 		}
 
 		// remove `u` from vSet
-		delete(vSet, u)
+		//delete(vSet, u)
+		vSet[u] = false
+		vSetSize--
 
 		// if `u` matches `v2` then exit the loop early
 		if u == v2 {
@@ -152,13 +155,13 @@ func (g *Graph) Path(v1, v2 int) []int {
 	return path
 }
 
-func smallestDistance(vSet map[int]struct{}, dist []int) int {
+func smallestDistance(vSet []bool, dist []int) int {
 	minDist := math.MaxInt64
 	minV := -1
-	for k := range vSet {
-		if dist[k] < minDist {
-			minV = k
-			minDist = dist[k]
+	for v, t := range vSet {
+		if t && dist[v] < minDist {
+			minV = v
+			minDist = dist[v]
 		}
 	}
 
