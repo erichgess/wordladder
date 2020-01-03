@@ -22,12 +22,14 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
-	g := LoadDictionary("./words")
+	fmt.Println("Loading Dictionary")
+	g := LoadDictionary("./big.dict")
 
-	v1 := g.Find("dog")
-	v2 := g.Find("cat")
+	fmt.Println("Finding Path from dog to cat")
+	v1 := g.Find("aeon")
+	v2 := g.Find("adoze")
 	var p []int
-	for i := 0; i < 1000000; i++ {
+	for i := 0; i < 1; i++ {
 		p = g.Path(v1, v2)
 	}
 
