@@ -9,6 +9,9 @@ import (
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
+var dict = flag.String("dict", "./big.dict", "the file containing the set of words to use")
+var src = flag.String("src", "", "the starting word")
+var dest = flag.String("dest", "", "the word you are trying to reach")
 
 func main() {
 	flag.Parse()
@@ -23,11 +26,11 @@ func main() {
 	}
 
 	fmt.Println("Loading Dictionary")
-	g := LoadDictionary("./big.dict")
+	g := LoadDictionary(*dict)
 
-	fmt.Println("Finding Path from dog to cat")
-	v1 := g.Find("dogs")
-	v2 := g.Find("dog")
+	fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
+	v1 := g.Find(*src)
+	v2 := g.Find(*dest)
 	var p []int
 
 	if v1 < 0 || v2 < 0 {
