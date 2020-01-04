@@ -25,19 +25,9 @@ func main() {
 	fmt.Println("Loading Dictionary")
 	g := LoadDictionary("./big.dict")
 
-	index := newIndex()
-	for i, w := range g.vertices {
-		index.add(i, w.word)
-	}
-	adj := index.adj("cat")
-	fmt.Println(adj)
-	for _, id := range adj {
-		fmt.Println(g.vertices[id].word)
-	}
-
 	fmt.Println("Finding Path from dog to cat")
-	v1 := g.Find("aeon")
-	v2 := g.Find("adoze")
+	v1 := g.Find("dogs")
+	v2 := g.Find("dog")
 	var p []int
 
 	if v1 < 0 || v2 < 0 {
