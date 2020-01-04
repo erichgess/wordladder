@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"container/heap"
 	"log"
 	"math"
 	"os"
@@ -95,47 +96,51 @@ func (g *Graph) Find(word string) int {
 func (g *Graph) Path(v1, v2 int) []int {
 	dist := make([]int, len(g.vertices))
 	prev := make([]int, len(g.vertices))
-	vSet := make([]bool, len(g.vertices))
-	vSetSize := len(vSet)
+	pq := make(PriorityQueue, len(g.vertices))
+	items := make(map[int]*Item)
 
 	for i := range g.vertices {
 		dist[i] = math.MaxInt64
 		prev[i] = math.MaxInt64
-		vSet[i] = true
+		pq[i] = &Item{
+			value:    i,
+			priority: math.MaxInt64,
+			index:    i,
+		}
+		items[i] = pq[i]
 	}
 
 	dist[v1] = 0
+	pq[v1].priority = 0
+	heap.Init(&pq)
 
-	for vSetSize > 0 {
+	for pq.Len() > 0 {
 		// find vertex, `u`, in vSet with the smallest distance
-		u := smallestDistance(vSet, dist)
+		u := (heap.Pop(&pq).(*Item))
 
 		// then no path has been found
-		if u == -1 {
+		if u.priority == math.MaxInt64 {
 			return nil
 		}
 
-		// remove `u` from vSet
-		//delete(vSet, u)
-		vSet[u] = false
-		vSetSize--
-
 		// if `u` matches `v2` then exit the loop early
-		if u == v2 {
+		if u.value == v2 {
 			break
 		}
 
 		// for each vertex adjacent to `u`
-		adjList := g.getAdjacent(u)
+		adjList := g.getAdjacent(u.value)
 		for _, v := range adjList {
 			// compute the distance from the source to `v`
-			alt := dist[u] + 1
+			alt := dist[u.value] + 1
 
 			// if the new distance is shorter than the existing distance for `v`
 			if alt < dist[v] {
 				// update dist and prev
 				dist[v] = alt
-				prev[v] = u
+				prev[v] = u.value
+				//pq.DecreasePriority(v, alt)
+				pq.update(items[v], v, alt)
 			}
 		}
 	}
