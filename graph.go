@@ -166,6 +166,59 @@ func (g *Graph) Path(v1, v2 int) []int {
 	return path
 }
 
+// AllPaths finds all the paths from the given word to other words in the dictionary
+//
+// Details: this uses Dijkstra's algorithm: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+func (g *Graph) AllPaths(v1 int) *Paths {
+	dist := make([]int, len(g.vertices))
+	prev := make([]int, len(g.vertices))
+	pq := make(PriorityQueue, len(g.vertices))
+	items := make(map[int]*Item)
+
+	for i := range g.vertices {
+		dist[i] = math.MaxInt64
+		prev[i] = math.MaxInt64
+		pq[i] = &Item{
+			value:    i,
+			priority: math.MaxInt64,
+			index:    i,
+		}
+		items[i] = pq[i]
+	}
+
+	dist[v1] = 0
+	pq[v1].priority = 0
+	heap.Init(&pq)
+
+	for pq.Len() > 0 {
+		// find vertex, `u`, in vSet with the smallest distance
+		u := (heap.Pop(&pq).(*Item))
+
+		// for each vertex adjacent to `u`
+		adjList := g.getAdjacent(u.value)
+		for _, v := range adjList {
+			// compute the distance from the source to `v`
+			alt := dist[u.value] + 1
+
+			// if the new distance is shorter than the existing distance for `v`
+			if alt < dist[v] {
+				// update dist and prev
+				dist[v] = alt
+				prev[v] = u.value
+				//pq.DecreasePriority(v, alt)
+				pq.update(items[v], v, alt)
+			}
+		}
+	}
+
+	return &Paths{
+		g:    g,
+		prev: prev,
+		dist: dist,
+		src:  v1,
+	}
+}
+
 func smallestDistance(vSet []bool, dist []int) int {
 	minDist := math.MaxInt64
 	minV := -1
@@ -214,4 +267,67 @@ func (g *Graph) EdgeCount() int {
 	}
 
 	return e / 2
+}
+
+// Paths is the set of all paths from a source word to all other words (if reachable)
+// in the dictionary
+type Paths struct {
+	g    *Graph
+	prev []int
+	dist []int
+	src  int
+}
+
+func (p *Paths) Longest() []int {
+	v := p.src
+	max := p.dist[v]
+	for i, d := range p.dist {
+		if d != math.MaxInt64 && d > max {
+			max = d
+			v = i
+		}
+	}
+
+	path := make([]int, 0, max+1)
+	for p.prev[v] < math.MaxInt64 {
+		path = append(path, v)
+		v = p.prev[v]
+	}
+	path = append(path, p.src)
+
+	// reverse order
+	for i := 0; i < len(path)/2; i++ {
+		tmp := path[i]
+		path[i] = path[len(path)-1-i]
+		path[len(path)-1-i] = tmp
+	}
+
+	return path
+}
+
+func (p *Paths) To(word string) []int {
+	u := p.g.Find(word)
+	if u < 0 {
+		return nil
+	}
+
+	if p.prev[u] < math.MaxInt64 || u == p.src {
+		path := make([]int, 0, p.dist[u]+1)
+		for p.prev[u] < math.MaxInt64 {
+			path = append(path, u)
+			u = p.prev[u]
+		}
+		path = append(path, p.src)
+
+		// reverse order
+		for i := 0; i < len(path)/2; i++ {
+			tmp := path[i]
+			path[i] = path[len(path)-1-i]
+			path[len(path)-1-i] = tmp
+		}
+
+		return path
+	}
+
+	return nil
 }

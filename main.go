@@ -10,8 +10,8 @@ import (
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
 var dict = flag.String("dict", "./big.dict", "the file containing the set of words to use")
-var src = flag.String("src", "", "the starting word")
-var dest = flag.String("dest", "", "the word you are trying to reach")
+var src = flag.String("src", "cat", "the starting word")
+var dest = flag.String("dest", "dogs", "the word you are trying to reach")
 
 func main() {
 	flag.Parse()
@@ -48,6 +48,13 @@ func main() {
 	}
 
 	for _, v := range p {
+		fmt.Println(g.vertices[v].word)
+	}
+
+	fmt.Println("Using Paths")
+	paths := g.AllPaths(v1)
+	longest := paths.To(*dest)
+	for _, v := range longest {
 		fmt.Println(g.vertices[v].word)
 	}
 }
