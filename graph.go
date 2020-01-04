@@ -66,8 +66,10 @@ func LoadDictionary(path string) *Graph {
 		cWord := g.vertices[i].word
 		adj := index.adj(cWord)
 		for _, j := range adj {
-			g.adjList[i] = append(g.adjList[i], j)
-			g.adjList[j] = append(g.adjList[j], i)
+			if distance(cWord, g.vertices[j].word) == 1 {
+				g.adjList[i] = append(g.adjList[i], j)
+				g.adjList[j] = append(g.adjList[j], i)
+			}
 		}
 	}
 
