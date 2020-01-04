@@ -23,7 +23,10 @@ func (idx *index) add(id int, word string) {
 }
 
 func (idx *index) adj(word string) []int {
-	adjList := make([]int, 0)
+	var adjList []int
+	if adjList = idx.index[word]; adjList == nil {
+		adjList = make([]int, 0)
+	}
 
 	for i := 0; i < len(word); i++ {
 		tmp := word[:i] + word[i+1:]

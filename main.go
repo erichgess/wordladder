@@ -36,8 +36,8 @@ func main() {
 	}
 
 	fmt.Println("Finding Path from dog to cat")
-	v1 := g.Find("cat")
-	v2 := g.Find("dog")
+	v1 := g.Find("aeon")
+	v2 := g.Find("adoze")
 	var p []int
 
 	if v1 < 0 || v2 < 0 {
