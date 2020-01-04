@@ -195,3 +195,18 @@ func distance(w1, w2 string) int {
 
 	return dist
 }
+
+// WordCount returns hte number of words in the graph
+func (g *Graph) WordCount() int {
+	return len(g.vertices)
+}
+
+// EdgeCount returns the number of connections between words in the graph
+func (g *Graph) EdgeCount() int {
+	e := 0
+	for i := range g.adjList {
+		e += len(g.adjList[i])
+	}
+
+	return e / 2
+}

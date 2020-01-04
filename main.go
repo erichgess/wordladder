@@ -27,6 +27,7 @@ func main() {
 
 	fmt.Println("Loading Dictionary")
 	g := LoadDictionary(*dict)
+	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
 	fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
 	v1 := g.Find(*src)
