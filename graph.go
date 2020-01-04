@@ -55,15 +55,19 @@ func LoadDictionary(path string) *Graph {
 		g.adjList[i] = make([]int, 0)
 	}
 
+	index := newIndex()
+	for i, w := range g.vertices {
+		index.add(i, w.word)
+	}
+
 	// for each word, find words which are only one letter different
 	// and create edges connecting them.
 	for i := 0; i < len(g.vertices); i++ {
 		cWord := g.vertices[i].word
-		for j := i + 1; j < len(g.vertices); j++ {
-			if distance(cWord, g.vertices[j].word) == 1 {
-				g.adjList[i] = append(g.adjList[i], j)
-				g.adjList[j] = append(g.adjList[j], i)
-			}
+		adj := index.adj(cWord)
+		for _, j := range adj {
+			g.adjList[i] = append(g.adjList[i], j)
+			g.adjList[j] = append(g.adjList[j], i)
 		}
 	}
 
