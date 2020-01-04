@@ -28,6 +28,7 @@ func (pq PriorityQueue) Swap(i, j int) {
 	pq[j].index = j
 }
 
+// Push an item onto the base pq slice
 func (pq *PriorityQueue) Push(x interface{}) {
 	n := len(*pq)
 	item := x.(*Item)
@@ -35,6 +36,7 @@ func (pq *PriorityQueue) Push(x interface{}) {
 	*pq = append(*pq, item)
 }
 
+// Pop an item off of the base pq slice
 func (pq *PriorityQueue) Pop() interface{} {
 	old := *pq
 	n := len(old)
@@ -50,15 +52,4 @@ func (pq *PriorityQueue) update(item *Item, value int, priority int) {
 	item.value = value
 	item.priority = priority
 	heap.Fix(pq, item.index)
-}
-
-// DecreasePriority will find the item with value `value` and set the
-// priority to `priority` then update the heap
-func (pq *PriorityQueue) DecreasePriority(value int, priority int) {
-	for i := range *pq {
-		if (*pq)[i].value == value {
-			pq.update((*pq)[i], value, priority)
-			break
-		}
-	}
 }
