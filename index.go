@@ -1,36 +1,54 @@
 package main
 
+import (
+	"hash"
+
+	"github.com/spaolacci/murmur3"
+)
+
 type index struct {
-	index map[string]([]int)
+	hasher hash.Hash32
+	index  map[uint32]([]int)
 }
 
 func newIndex() *index {
 	return &index{
-		index: make(map[string]([]int)),
+		index: make(map[uint32]([]int)),
 	}
 }
 
 func (idx *index) add(id int, word string) {
+
 	// for each permutation of `word` created by deleting a single letter
 	// add `id` to the index associated with that permutation
+	hasher := murmur3.New32()
 	for i := 0; i < len(word); i++ {
 		tmp := word[:i] + word[i+1:]
-		if idx.index[tmp] == nil {
-			idx.index[tmp] = make([]int, 0)
+		hasher.Reset()
+		hasher.Write([]byte(tmp))
+		hash := hasher.Sum32()
+		if idx.index[hash] == nil {
+			idx.index[hash] = make([]int, 0)
 		}
-		idx.index[tmp] = append(idx.index[tmp], id)
+		idx.index[hash] = append(idx.index[hash], id)
 	}
 }
 
 func (idx *index) adj(word string) []int {
 	var adjList []int
-	if adjList = idx.index[word]; adjList == nil {
+	hasher := murmur3.New32()
+	hasher.Write([]byte(word))
+	hash := hasher.Sum32()
+	if adjList = idx.index[hash]; adjList == nil {
 		adjList = make([]int, 0)
 	}
 
 	for i := 0; i < len(word); i++ {
 		tmp := word[:i] + word[i+1:]
-		if v, ok := idx.index[tmp]; ok {
+		hasher.Reset()
+		hasher.Write([]byte(tmp))
+		hash := hasher.Sum32()
+		if v, ok := idx.index[hash]; ok {
 			for _, id := range v {
 				exists := false
 				for j := range adjList {

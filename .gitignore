@@ -1,3 +1,4 @@
 wordladder
 *.prof
 *.svg
+vendor/
