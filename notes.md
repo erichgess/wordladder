@@ -25,3 +25,9 @@ After: 15.prof  1.66s  (third run)
 
 One thing to note, I ran the after twice (the first time it was slightly slower).  I don't know if this is because the performance improves on teh second run
 or if the performance is that variable.  I ran a third time and it was 1.66
+
+2. Reduce the number of calls to grow slice.  By recording the max bucket size and init the adjList to that size.
+Before: 15.prof 1.66 (third run)
+After: 16.prof 1.85 (fourth run)
+
+I ran the changed code 4 times and it was always slower.  Reverted teh code changes.
