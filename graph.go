@@ -64,6 +64,8 @@ func LoadDictionary(path string) *Graph {
 		index.add(i, w.word)
 	}
 
+	indexDuplicates(index)
+
 	// for each word, find words which are only one letter different
 	// and create edges connecting them.
 	adjCallCount := 0
@@ -82,6 +84,7 @@ func LoadDictionary(path string) *Graph {
 	}
 
 	fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
+	adjListStats(&g)
 
 	return &g
 }

@@ -19,6 +19,18 @@ Profiles showing change:
 ### Insights
 1. How many duplicates show up in the index and the adjacency lists
 
+Here are the stats:
+```
+3146638/3146638 buckets have duplicates
+89856 total words were duplicated within buckets across the index
+165084/370103 vertices have duplicates in their adjacency lists
+589446/1281740 adj are duplicates
+Words: 370103   Edges: 663608
+```
+
+44% of all entries on the adj list are duplicates.  This would indicate that a large amount of time in LoadDictionary is duplicated work
+when actually constructing the graph.
+
 ### Load Dictionary
 1. Only create one Hash object for the index class.  Then reuse that one for `add` and `adj`.
 

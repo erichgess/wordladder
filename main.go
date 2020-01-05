@@ -32,23 +32,10 @@ func main() {
 	fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
 	v1 := g.Find(*src)
 	v2 := g.Find(*dest)
-	var p []int
 
 	if v1 < 0 || v2 < 0 {
 		fmt.Println("Word not in dictionary")
 		return
-	}
-
-	for i := 0; i < 1; i++ {
-		p = g.Path(v1, v2)
-	}
-
-	if len(p) == 0 {
-		fmt.Println("No Path Found")
-	}
-
-	for _, v := range p {
-		fmt.Println(g.vertices[v].word)
 	}
 
 	fmt.Println("Using Paths")
