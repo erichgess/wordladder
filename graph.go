@@ -278,6 +278,7 @@ type Paths struct {
 	src  int
 }
 
+// Longest returns the longest path in this set of paths.
 func (p *Paths) Longest() []int {
 	v := p.src
 	max := p.dist[v]
@@ -305,6 +306,8 @@ func (p *Paths) Longest() []int {
 	return path
 }
 
+// To fines the path to `word` from the root word used to generate
+// this set of paths.
 func (p *Paths) To(word string) []int {
 	u := p.g.Find(word)
 	if u < 0 {
