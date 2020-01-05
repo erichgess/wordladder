@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"container/heap"
+	"fmt"
 	"log"
 	"math"
 	"os"
@@ -57,22 +58,30 @@ func LoadDictionary(path string) *Graph {
 	}
 
 	index := newIndex()
+	addCallCount := 0
 	for i, w := range g.vertices {
+		addCallCount++
 		index.add(i, w.word)
 	}
 
 	// for each word, find words which are only one letter different
 	// and create edges connecting them.
+	adjCallCount := 0
+	distCallCount := 0
 	for i := 0; i < len(g.vertices); i++ {
 		cWord := g.vertices[i].word
 		adj := index.adj(cWord)
+		adjCallCount++
 		for _, j := range adj {
+			distCallCount++
 			if distance(cWord, g.vertices[j].word) == 1 {
 				g.adjList[i] = append(g.adjList[i], j)
 				g.adjList[j] = append(g.adjList[j], i)
 			}
 		}
 	}
+
+	fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
 
 	return &g
 }
