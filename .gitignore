@@ -1,4 +1,4 @@
 wordladder
 *.svg
-tmp.prof
+tmp*.prof
 vendor/
