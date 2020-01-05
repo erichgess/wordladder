@@ -16,6 +16,9 @@ Profiles showing change:
 13.prof - Using murmur3 hashing
 
 ## Perf Improvements
+### Insights
+1. How many duplicates show up in the index and the adjacency lists
+
 ### Load Dictionary
 1. Only create one Hash object for the index class.  Then reuse that one for `add` and `adj`.
 
