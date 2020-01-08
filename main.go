@@ -9,7 +9,7 @@ import (
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
-var dict = flag.String("dict", "./big.dict", "the file containing the set of words to use")
+var dict = flag.String("dict", "./dicts/big.dict", "the file containing the set of words to use")
 var src = flag.String("src", "cat", "the starting word")
 var dest = flag.String("dest", "dogs", "the word you are trying to reach")
 var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
