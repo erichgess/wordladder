@@ -1,4 +1,5 @@
 wordladder
+wordladderMaster
 *.svg
 tmp*.prof
 vendor/
