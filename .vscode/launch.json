@@ -11,7 +11,14 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {},
-            "args": []
+            "args": [
+                "--src",
+                "a",
+                "-dest",
+                "aah",
+                "--dict",
+                "./dicts/test250.dict"
+            ]
         }
     ]
 }
