@@ -21,13 +21,15 @@ func newIndex() *index {
 func (idx *index) add(id int, word []byte) {
 	// for each permutation of `word` created by deleting a single letter
 	// add `id` to the index associated with that permutation
-	tmp := make([]byte, 0, len(word))
+	tmp := make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
-		copy(tmp, word[:i])
-		tmp = append(tmp, word[i+1:]...)
+		tmpA := tmp[:i]
+		copy(tmpA, word[:i])
+		tmpB := tmp[i:]
+		copy(tmpB, word[i+1:])
 		//tmp := word[:i] + word[i+1:]
 		idx.hasher.Reset()
-		idx.hasher.Write([]byte(tmp))
+		idx.hasher.Write(tmp)
 		hash := idx.hasher.Sum32()
 		if idx.index[hash] == nil {
 			idx.index[hash] = make([]int, 0)
@@ -45,11 +47,14 @@ func (idx *index) near(word []byte) []int {
 		adjList = make([]int, 0)
 	}
 
-	tmp := make([]byte, 0, len(word))
+	tmp := make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
-		copy(tmp, word[:i])
-		tmp = append(tmp, word[i+1:]...)
+		tmpA := tmp[:i]
+		copy(tmpA, word[:i])
+		tmpB := tmp[i:]
+		copy(tmpB, word[i+1:])
 		//tmp := word[:i] + word[i+1:]
+
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
 		hash := idx.hasher.Sum32()

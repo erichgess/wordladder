@@ -55,3 +55,6 @@ Stats (from the flamegraph):
 -----------------------------| LoadDictionary  | index.add  | index.near
 Before Changes (with string) | 1.92s           | 1.18s      | 0.58s
 After changes ([]byte)       | 
+
+Things that I've noticed:
+while debugging, after reading the dictionary, the list of vertices, all the byte slices have a length of 3 or 4 but a capacty of over 4000?
