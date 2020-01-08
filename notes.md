@@ -50,3 +50,8 @@ I ran the changed code 4 times and it was always slower.  Reverted teh code chan
 3. A lot of time is spent on `stringtoslicebyte`.  Can I reduce this or get rid of it?  In the code, a lot of time is spent
 doing string manipulation and then converting strings to slices.  What if, I skip the strings, just read the dictionary as a
 set of byte arrays, and just maniuplate the byte arrays?  Then, there will be no conversion needed when using the murmur3 hash.
+
+Stats (from the flamegraph):
+-----------------------------| LoadDictionary  | index.add  | index.near
+Before Changes (with string) | 1.92s           | 1.18s      | 0.58s
+After changes ([]byte)       | 
