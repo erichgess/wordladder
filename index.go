@@ -33,7 +33,7 @@ func (idx *index) add(id int, word string) {
 	}
 }
 
-func (idx *index) adj(word string) []int {
+func (idx *index) near(word string) []int {
 	var adjList []int
 	byWord := []byte(word)
 	idx.hasher.Reset()

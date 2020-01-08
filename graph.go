@@ -74,7 +74,7 @@ func LoadDictionary(path string, stats bool) *Graph {
 	distCallCount := 0
 	for i := 0; i < len(g.vertices); i++ {
 		cWord := g.vertices[i].word
-		adj := index.adj(cWord)
+		adj := index.near(cWord)
 		adjCallCount++
 		for _, j := range adj {
 			distCallCount++
