@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"container/heap"
 	"fmt"
 	"log"
@@ -18,7 +19,7 @@ type Edge struct {
 
 // Vertex represents a single word
 type Vertex struct {
-	word string
+	word []byte
 }
 
 // Graph is a dictionary of words and a set of edges connecting each word
@@ -50,8 +51,8 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 
 	// read the dictionary and for each word at it as a vertex in the graph.
 	for scanner.Scan() {
-		word := scanner.Text()
-		g.vertices = append(g.vertices, Vertex{strings.ToLower(word)})
+		word := scanner.Bytes()
+		g.vertices = append(g.vertices, Vertex{word})
 	}
 
 	if dump != "" {
@@ -84,7 +85,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 		adjCallCount++
 		for _, j := range adj {
 			distCallCount++
-			if distance(cWord, g.vertices[j].word) == 1 {
+			if distance(string(cWord), string(g.vertices[j].word)) == 1 {
 				g.adjList[i] = append(g.adjList[i], j)
 				g.adjList[j] = append(g.adjList[j], i)
 			}
@@ -106,8 +107,9 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 // Find returns the id of the vertex with the given word, if it is in the graph.
 // If the word is not in the graph then it returns -1
 func (g *Graph) Find(word string) int {
+	byWord := []byte(word)
 	for i, v := range g.vertices {
-		if v.word == word {
+		if bytes.Compare(v.word, byWord) == 0 {
 			return i
 		}
 	}
