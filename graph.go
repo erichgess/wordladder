@@ -51,7 +51,9 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 
 	// read the dictionary and for each word at it as a vertex in the graph.
 	for scanner.Scan() {
-		word := scanner.Bytes()
+		by := scanner.Bytes()
+		word := make([]byte, len(by))
+		copy(word, by)
 		g.vertices = append(g.vertices, Vertex{word})
 	}
 
