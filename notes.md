@@ -46,3 +46,7 @@ Before: 15.prof 1.66 (third run)
 After: 16.prof 1.85 (fourth run)
 
 I ran the changed code 4 times and it was always slower.  Reverted teh code changes.
+
+3. A lot of time is spent on `stringtoslicebyte`.  Can I reduce this or get rid of it?  In the code, a lot of time is spent
+doing string manipulation and then converting strings to slices.  What if, I skip the strings, just read the dictionary as a
+set of byte arrays, and just maniuplate the byte arrays?  Then, there will be no conversion needed when using the murmur3 hash.
