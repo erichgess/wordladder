@@ -34,7 +34,7 @@ type Graph struct {
 //
 // The file format is:
 // <New line separated list of words>
-func LoadDictionary(path string) *Graph {
+func LoadDictionary(path string, stats bool) *Graph {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +64,9 @@ func LoadDictionary(path string) *Graph {
 		index.add(i, w.word)
 	}
 
-	indexDuplicates(index)
+	if stats {
+		indexDuplicates(index)
+	}
 
 	// for each word, find words which are only one letter different
 	// and create edges connecting them.
@@ -83,8 +85,10 @@ func LoadDictionary(path string) *Graph {
 		}
 	}
 
-	fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
-	adjListStats(&g)
+	if stats {
+		fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
+		adjListStats(&g)
+	}
 
 	return &g
 }

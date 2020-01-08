@@ -12,6 +12,7 @@ var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
 var dict = flag.String("dict", "./big.dict", "the file containing the set of words to use")
 var src = flag.String("src", "cat", "the starting word")
 var dest = flag.String("dest", "dogs", "the word you are trying to reach")
+var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
 
 func main() {
 	flag.Parse()
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	fmt.Println("Loading Dictionary")
-	g := LoadDictionary(*dict)
+	g := LoadDictionary(*dict, *perfStats)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
 	fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
