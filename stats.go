@@ -65,3 +65,16 @@ func adjListStats(g *Graph) {
 	}
 	fmt.Printf("%d/%d adj are duplicates\n", dupeEdges, totalEdges)
 }
+
+// PrintAdjList prints, to STDIO, a list of all the words in the graph and the words to which they are adjacent
+func (g *Graph) PrintAdjList() {
+	for i, v := range g.vertices {
+		fmt.Printf("%s: ", string(v.word))
+
+		adjList := g.adjList[i]
+		for _, adj := range adjList {
+			fmt.Printf("%s, ", string(g.vertices[adj].word))
+		}
+		fmt.Println()
+	}
+}

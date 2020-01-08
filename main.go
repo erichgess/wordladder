@@ -13,6 +13,7 @@ var dict = flag.String("dict", "./dicts/big.dict", "the file containing the set 
 var src = flag.String("src", "cat", "the starting word")
 var dest = flag.String("dest", "dogs", "the word you are trying to reach")
 var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
+var printGraph = flag.Bool("print", false, "prints the graph to STDIO, overrides path finding")
 
 func main() {
 	flag.Parse()
@@ -30,19 +31,23 @@ func main() {
 	g := LoadDictionary(*dict, *perfStats)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
-	fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
-	v1 := g.Find(*src)
-	v2 := g.Find(*dest)
+	if !*printGraph {
+		fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
+		v1 := g.Find(*src)
+		v2 := g.Find(*dest)
 
-	if v1 < 0 || v2 < 0 {
-		fmt.Println("Word not in dictionary")
-		return
-	}
+		if v1 < 0 || v2 < 0 {
+			fmt.Println("Word not in dictionary")
+			return
+		}
 
-	fmt.Println("Using Paths")
-	paths := g.AllPaths(v1)
-	longest := paths.To(*dest)
-	for _, v := range longest {
-		fmt.Println(g.vertices[v].word)
+		fmt.Println("Using Paths")
+		paths := g.AllPaths(v1)
+		longest := paths.To(*dest)
+		for _, v := range longest {
+			fmt.Println(g.vertices[v].word)
+		}
+	} else {
+		g.PrintAdjList()
 	}
 }
