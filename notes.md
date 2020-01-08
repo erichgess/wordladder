@@ -57,4 +57,5 @@ Before Changes (with string) | 1.92s           | 1.18s      | 0.58s
 After changes ([]byte)       | 
 
 Things that I've noticed:
-while debugging, after reading the dictionary, the list of vertices, all the byte slices have a length of 3 or 4 but a capacty of over 4000?
+while debugging, after reading the dictionary, the list of vertices, all the byte slices have a length of 3 or 4 but a capacty of over 4000?  This is because the []byte returned by the Scanner is not safe to share as it's just a slice into the buffer the Scanner uses to
+read from (this led to a bug in my code when reading large dictionaries).  I needed to copy that data to my own safe slice.
