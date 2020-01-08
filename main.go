@@ -42,7 +42,12 @@ func main() {
 		v2 := g.Find(*dest)
 
 		if v1 < 0 || v2 < 0 {
-			fmt.Println("Word not in dictionary")
+			if v1 < 0 {
+				fmt.Printf("%s was not found\n", *src)
+			}
+			if v2 < 0 {
+				fmt.Printf("%s was not found\n", *dest)
+			}
 			return
 		}
 
