@@ -85,8 +85,8 @@ func LoadDictionary(path string, stats bool) *Graph {
 		}
 	}
 
+	fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
 	if stats {
-		fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
 		adjListStats(&g)
 	}
 
