@@ -55,7 +55,7 @@ func main() {
 		paths := g.AllPaths(v1)
 		longest := paths.To(*dest)
 		for _, v := range longest {
-			fmt.Println(g.vertices[v].word)
+			fmt.Println(string(g.vertices[v].word))
 		}
 	} else {
 		g.PrintAdjList()
