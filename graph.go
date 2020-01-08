@@ -35,7 +35,7 @@ type Graph struct {
 //
 // The file format is:
 // <New line separated list of words>
-func LoadDictionary(path string, stats bool) *Graph {
+func LoadDictionary(path string, stats bool, dump string) *Graph {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -53,6 +53,11 @@ func LoadDictionary(path string, stats bool) *Graph {
 		word := scanner.Text()
 		g.vertices = append(g.vertices, Vertex{strings.ToLower(word)})
 	}
+
+	if dump != "" {
+		g.dumpVertices(dump + "/vertices.txt")
+	}
+
 	g.adjList = make([][]int, len(g.vertices))
 	for i := range g.adjList {
 		g.adjList[i] = make([]int, 0)
@@ -84,6 +89,10 @@ func LoadDictionary(path string, stats bool) *Graph {
 				g.adjList[j] = append(g.adjList[j], i)
 			}
 		}
+	}
+
+	if dump != "" {
+		g.dumpAdjList(dump + "/adj.txt")
 	}
 
 	fmt.Printf("Add: %d\tAdj: %d\tDist: %d\n", addCallCount, adjCallCount, distCallCount)
@@ -363,5 +372,32 @@ func (g *Graph) PrintAdjList() {
 		}
 		sort.Strings(adjWords)
 		fmt.Printf("%s: %s\n", string(v.word), strings.Join(adjWords, ", "))
+	}
+}
+
+func (g *Graph) dumpAdjList(path string) {
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for i, v := range g.vertices {
+		adjList := g.adjList[i]
+		adjWords := make([]string, len(adjList))
+		for j, adj := range adjList {
+			adjWords[j] = string(g.vertices[adj].word)
+		}
+		sort.Strings(adjWords)
+		fmt.Fprintf(f, "%s: %s\n", string(v.word), strings.Join(adjWords, ", "))
+	}
+}
+
+func (g *Graph) dumpVertices(path string) {
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, v := range g.vertices {
+
+		fmt.Fprintf(f, "%s\n", string(v.word))
 	}
 }

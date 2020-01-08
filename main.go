@@ -14,6 +14,7 @@ var src = flag.String("src", "cat", "the starting word")
 var dest = flag.String("dest", "dogs", "the word you are trying to reach")
 var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
 var printGraph = flag.Bool("print", false, "prints the graph to STDIO, overrides path finding")
+var dump = flag.String("dump", "", "when set, intermediate data will be dumped to the given path")
 
 func main() {
 	flag.Parse()
@@ -27,8 +28,12 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
+	if *dump != "" {
+		createPathIfNotExists(*dump)
+	}
+
 	fmt.Println("Loading Dictionary")
-	g := LoadDictionary(*dict, *perfStats)
+	g := LoadDictionary(*dict, *perfStats, *dump)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
 	if !*printGraph {
@@ -49,5 +54,14 @@ func main() {
 		}
 	} else {
 		g.PrintAdjList()
+	}
+}
+
+func createPathIfNotExists(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		fmt.Printf("%s does not exist, creating\n", path)
+		if err := os.MkdirAll(path, os.ModePerm); err != nil {
+			fmt.Printf("Creation failed: %s", err)
+		}
 	}
 }
