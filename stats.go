@@ -1,10 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 /*
 Set of functions for computing different stats
 */
+
+func newTimer(name string) func() {
+	start := time.Now()
+	return func() {
+		stop := time.Now()
+		total := stop.Sub(start).Seconds()
+		fmt.Printf("%s took %fs\n", name, total)
+	}
+}
 
 func indexDuplicates(idx *index) {
 	type indexStat struct {

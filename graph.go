@@ -37,6 +37,7 @@ type Graph struct {
 // The file format is:
 // <New line separated list of words>
 func LoadDictionary(path string, stats bool, dump string) *Graph {
+	defer newTimer("LoadDictionary")()
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
