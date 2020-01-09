@@ -15,6 +15,7 @@ var dest = flag.String("dest", "dogs", "the word you are trying to reach")
 var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
 var printGraph = flag.Bool("print", false, "prints the graph to STDIO, overrides path finding")
 var dump = flag.String("dump", "", "when set, intermediate data will be dumped to the given path")
+var dictStats = flag.Bool("dict-stats", false, "print out statistics for the given dictionary")
 
 func main() {
 	flag.Parse()
@@ -35,6 +36,10 @@ func main() {
 	fmt.Println("Loading Dictionary")
 	g := LoadDictionary(*dict, *perfStats, *dump)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
+
+	if *dictStats {
+		dictionaryStats(*dict)
+	}
 
 	if !*printGraph {
 		fmt.Printf("Finding Path from %s to %s\n", *src, *dest)

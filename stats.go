@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
 	"time"
 )
 
@@ -76,4 +79,41 @@ func adjListStats(g *Graph) {
 		totalEdges += len(g.adjList[k])
 	}
 	fmt.Printf("%d/%d adj are duplicates\n", dupeEdges, totalEdges)
+}
+
+func dictionaryStats(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	wordCount := 0
+	lenDist := make(map[int]int)
+
+	for scanner.Scan() {
+		by := scanner.Bytes()
+		word := make([]byte, len(by))
+		copy(word, by)
+
+		wordCount++
+		lenDist[len(word)]++
+	}
+
+	fmt.Printf("Word Count: %d\n", wordCount)
+	fmt.Printf("Num Lengths: %d\n", len(lenDist))
+
+	longestWord := 0
+	for k := range lenDist {
+		if k > longestWord {
+			longestWord = k
+		}
+	}
+
+	for i := 0; i <= longestWord; i++ {
+		if v, ok := lenDist[i]; ok {
+			fmt.Printf("%d =\t%d\n", i, v)
+		}
+	}
 }

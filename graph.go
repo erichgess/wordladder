@@ -44,14 +44,13 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
 	g := Graph{
 		vertices: make([]Vertex, 0),
 	}
 
 	// read the dictionary and for each word at it as a vertex in the graph.
 	longestWord := 0
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		by := scanner.Bytes()
 		word := make([]byte, len(by))
