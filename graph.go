@@ -228,6 +228,11 @@ func (g *Graph) AllPaths(v1 int) *Paths {
 		// find vertex, `u`, in vSet with the smallest distance
 		u := (heap.Pop(&pq).(*Item))
 
+		// there are no more nodes which are reachable from `v1`
+		if dist[u.value] == math.MaxInt64 {
+			break
+		}
+
 		// for each vertex adjacent to `u`
 		adjList := g.getAdjacent(u.value)
 		for _, v := range adjList {
@@ -239,7 +244,6 @@ func (g *Graph) AllPaths(v1 int) *Paths {
 				// update dist and prev
 				dist[v] = alt
 				prev[v] = u.value
-				//pq.DecreasePriority(v, alt)
 				pq.update(items[v], v, alt)
 			}
 		}

@@ -58,8 +58,11 @@ func main() {
 
 		fmt.Println("Using Paths")
 		paths := g.AllPaths(v1)
-		longest := paths.To(*dest)
-		for _, v := range longest {
+		p := paths.To(*dest)
+		if len(p) == 0 {
+			fmt.Printf("There is no path from %s to %s\n", *src, *dest)
+		}
+		for _, v := range p {
 			fmt.Println(string(g.vertices[v].word))
 		}
 	} else {
