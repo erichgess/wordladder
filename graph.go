@@ -71,7 +71,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	}
 
 	stopBldIdxTmr := newTimer("buildIndex")
-	index := newIndex(longestWord)
+	index := newIndex(1024*1024, longestWord)
 	for i, w := range g.vertices {
 		index.add(i, w.word)
 	}

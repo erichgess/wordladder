@@ -8,15 +8,21 @@ import (
 
 type index struct {
 	hasher hash.Hash64
-	index  map[uint64]([]int)
+	index  [][]int
 	buf    []byte // a shared buffer used for copying intermediate words
+	size   uint64
 }
 
-func newIndex(bufSize int) *index {
+func newIndex(size int, bufSize int) *index {
+	idx := make([][]int, size)
+	for i := range idx {
+		idx[i] = make([]int, 0)
+	}
 	return &index{
 		hasher: murmur3.New64(),
-		index:  make(map[uint64]([]int)),
 		buf:    make([]byte, 0, bufSize),
+		index:  idx,
+		size:   uint64(size),
 	}
 }
 
@@ -29,7 +35,10 @@ func (idx *index) add(id int, word []byte) {
 
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
-		hash := idx.hasher.Sum64()
+		hash := idx.hasher.Sum64() % idx.size
+		if idx.index[hash] == nil {
+			idx.index[hash] = make([]int, 0)
+		}
 		idx.index[hash] = append(idx.index[hash], id)
 	}
 }
@@ -37,10 +46,8 @@ func (idx *index) add(id int, word []byte) {
 func (idx *index) near(word []byte) []int {
 	idx.hasher.Reset()
 	idx.hasher.Write(word)
-	hash := idx.hasher.Sum64()
-
-	l := len(idx.index[hash])
-	adjList := make([]int, l)
+	hash := idx.hasher.Sum64() % idx.size
+	adjList := make([]int, len(idx.index[hash]))
 	copy(adjList, idx.index[hash])
 
 	tmp := idx.buf[:len(word)-1]
@@ -49,9 +56,17 @@ func (idx *index) near(word []byte) []int {
 
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
-		hash := idx.hasher.Sum64()
-		if v, ok := idx.index[hash]; ok {
-			for _, id := range v {
+		hash := idx.hasher.Sum64() % idx.size
+		v := idx.index[hash]
+		for _, id := range v {
+			exists := false
+			for j := range adjList {
+				if id == adjList[j] {
+					exists = true
+					break
+				}
+			}
+			if !exists {
 				adjList = append(adjList, id)
 			}
 		}
