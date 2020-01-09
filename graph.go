@@ -87,7 +87,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 		adjCallCount++
 		for _, j := range adj {
 			distCallCount++
-			if distance(string(cWord), string(g.vertices[j].word)) == 1 {
+			if distance(cWord, g.vertices[j].word) == 1 {
 				g.adjList[i] = append(g.adjList[i], j)
 				g.adjList[j] = append(g.adjList[j], i)
 			}
@@ -266,7 +266,7 @@ func (g *Graph) getAdjacent(v int) []int {
 	return g.adjList[v]
 }
 
-func distance(w1, w2 string) int {
+func distance(w1, w2 []byte) int {
 	dist := len(w1) - len(w2)
 	if dist < 0 {
 		dist = -dist
