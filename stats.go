@@ -23,7 +23,7 @@ func indexDuplicates(idx *index) {
 		dupes int
 		total int
 	}
-	duplicates := make(map[uint32]indexStat)
+	duplicates := make(map[uint64]indexStat)
 	for k, bckt := range idx.index {
 		count := make(map[int]int)
 		for _, v := range bckt {

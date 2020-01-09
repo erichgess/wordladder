@@ -7,14 +7,14 @@ import (
 )
 
 type index struct {
-	hasher hash.Hash32
-	index  map[uint32]([]int)
+	hasher hash.Hash64
+	index  map[uint64]([]int)
 }
 
 func newIndex() *index {
 	return &index{
-		hasher: murmur3.New32(),
-		index:  make(map[uint32]([]int)),
+		hasher: murmur3.New64(),
+		index:  make(map[uint64]([]int)),
 	}
 }
 
@@ -27,7 +27,7 @@ func (idx *index) add(id int, word []byte) {
 
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
-		hash := idx.hasher.Sum32()
+		hash := idx.hasher.Sum64()
 		if idx.index[hash] == nil {
 			idx.index[hash] = make([]int, 0)
 		}
@@ -38,7 +38,7 @@ func (idx *index) add(id int, word []byte) {
 func (idx *index) near(word []byte) []int {
 	idx.hasher.Reset()
 	idx.hasher.Write(word)
-	hash := idx.hasher.Sum32()
+	hash := idx.hasher.Sum64()
 
 	l := len(idx.index[hash])
 	adjList := make([]int, l)
@@ -50,7 +50,7 @@ func (idx *index) near(word []byte) []int {
 
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
-		hash := idx.hasher.Sum32()
+		hash := idx.hasher.Sum64()
 		if v, ok := idx.index[hash]; ok {
 			for _, id := range v {
 				exists := false
