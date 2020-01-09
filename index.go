@@ -23,11 +23,8 @@ func (idx *index) add(id int, word []byte) {
 	// add `id` to the index associated with that permutation
 	tmp := make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
-		tmpA := tmp[:i]
-		copy(tmpA, word[:i])
-		tmpB := tmp[i:]
-		copy(tmpB, word[i+1:])
-		//tmp := word[:i] + word[i+1:]
+		skipOneCopy(tmp, word, i)
+
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
 		hash := idx.hasher.Sum32()
@@ -49,11 +46,7 @@ func (idx *index) near(word []byte) []int {
 
 	tmp := make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
-		tmpA := tmp[:i]
-		copy(tmpA, word[:i])
-		tmpB := tmp[i:]
-		copy(tmpB, word[i+1:])
-		//tmp := word[:i] + word[i+1:]
+		skipOneCopy(tmp, word, i)
 
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
@@ -75,4 +68,13 @@ func (idx *index) near(word []byte) []int {
 	}
 
 	return adjList
+}
+
+// skipOneCopy copies the src slice to the dst slice while skipping
+// the byte at index `skip`.  `dst` should have a length >= `len(src)-1`.
+func skipOneCopy(dst []byte, src []byte, skip int) {
+	tmpA := dst[:skip]
+	tmpB := dst[skip:]
+	copy(tmpA, src[:skip])
+	copy(tmpB, src[skip+1:])
 }
