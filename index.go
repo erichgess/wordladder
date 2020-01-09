@@ -9,19 +9,21 @@ import (
 type index struct {
 	hasher hash.Hash64
 	index  map[uint64]([]int)
+	buf    []byte // a shared buffer used for copying intermediate words
 }
 
-func newIndex() *index {
+func newIndex(bufSize int) *index {
 	return &index{
 		hasher: murmur3.New64(),
 		index:  make(map[uint64]([]int)),
+		buf:    make([]byte, 0, bufSize),
 	}
 }
 
 func (idx *index) add(id int, word []byte) {
 	// for each permutation of `word` created by deleting a single letter
 	// add `id` to the index associated with that permutation
-	tmp := make([]byte, len(word)-1)
+	tmp := idx.buf[:len(word)-1] // make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
 		skipOneCopy(tmp, word, i)
 
@@ -41,7 +43,7 @@ func (idx *index) near(word []byte) []int {
 	adjList := make([]int, l)
 	copy(adjList, idx.index[hash])
 
-	tmp := make([]byte, len(word)-1)
+	tmp := idx.buf[:len(word)-1] // make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
 		skipOneCopy(tmp, word, i)
 

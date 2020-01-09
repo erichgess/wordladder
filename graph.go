@@ -51,11 +51,15 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	}
 
 	// read the dictionary and for each word at it as a vertex in the graph.
+	longestWord := 0
 	for scanner.Scan() {
 		by := scanner.Bytes()
 		word := make([]byte, len(by))
 		copy(word, by)
 		g.vertices = append(g.vertices, Vertex{word})
+		if len(word) > longestWord {
+			longestWord = len(word)
+		}
 	}
 
 	if dump != "" {
@@ -67,7 +71,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 		g.adjList[i] = make([]int, 0)
 	}
 
-	index := newIndex()
+	index := newIndex(longestWord)
 	addCallCount := 0
 	for i, w := range g.vertices {
 		addCallCount++
