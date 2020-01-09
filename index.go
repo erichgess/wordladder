@@ -36,13 +36,13 @@ func (idx *index) add(id int, word []byte) {
 }
 
 func (idx *index) near(word []byte) []int {
-	var adjList []int
 	idx.hasher.Reset()
 	idx.hasher.Write(word)
 	hash := idx.hasher.Sum32()
-	if adjList = idx.index[hash]; adjList == nil {
-		adjList = make([]int, 0)
-	}
+
+	l := len(idx.index[hash])
+	adjList := make([]int, l)
+	copy(adjList, idx.index[hash])
 
 	tmp := make([]byte, len(word)-1)
 	for i := 0; i < len(word); i++ {
