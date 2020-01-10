@@ -10,8 +10,8 @@ import (
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
 var dict = flag.String("dict", "./dicts/words", "the file containing the set of words to use")
-var src = flag.String("src", "cat", "the starting word")
-var dest = flag.String("dest", "dogs", "the word you are trying to reach")
+var src = flag.String("src", "", "the starting word")
+var dest = flag.String("dest", "", "the word you are trying to reach")
 var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
 var printGraph = flag.Bool("print", false, "prints the graph to STDIO, overrides path finding")
 var dump = flag.String("dump", "", "when set, intermediate data will be dumped to the given path")
@@ -41,7 +41,7 @@ func main() {
 		dictionaryStats(*dict)
 	}
 
-	if !*printGraph {
+	if *src != "" && *dest != "" {
 		fmt.Printf("Finding Path from %s to %s\n", *src, *dest)
 		v1 := g.Find(*src)
 		v2 := g.Find(*dest)
@@ -65,7 +65,7 @@ func main() {
 		for _, v := range p {
 			fmt.Println(string(g.vertices[v].word))
 		}
-	} else {
+	} else if *printGraph {
 		g.PrintAdjList()
 	}
 }
