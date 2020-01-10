@@ -3,3 +3,4 @@ wordladderMaster
 *.svg
 tmp*.prof
 vendor/
+profiles/benchmarks/
