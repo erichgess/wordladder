@@ -77,10 +77,7 @@ func (idx *index) near(word []byte, result []int) {
 		idx.hasher.Write(tmp)
 		hash := idx.hasher.Sum64() % idx.size
 		v := idx.index[hash]
-		for _, id := range v {
-			result[pos] = id
-			pos++
-		}
+		pos = copy(result[pos:], v)
 	}
 
 }
