@@ -43,6 +43,26 @@ func (idx *index) add(id int, word []byte) {
 	}
 }
 
+func (idx *index) nearCount(word []byte) int {
+	count := 0
+	idx.hasher.Reset()
+	idx.hasher.Write(word)
+	hash := idx.hasher.Sum64() % idx.size
+	count += len(idx.index[hash])
+
+	tmp := idx.buf[:len(word)-1] // make([]byte, len(word)-1)
+	for i := 0; i < len(word); i++ {
+		skipOneCopy(tmp, word, i)
+
+		idx.hasher.Reset()
+		idx.hasher.Write(tmp)
+		hash := idx.hasher.Sum64() % idx.size
+		count += len(idx.index[hash])
+	}
+
+	return count
+}
+
 func (idx *index) near(word []byte) []int {
 	idx.hasher.Reset()
 	idx.hasher.Write(word)
