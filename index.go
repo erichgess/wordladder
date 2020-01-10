@@ -63,12 +63,11 @@ func (idx *index) nearCount(word []byte) int {
 	return count
 }
 
-func (idx *index) near(word []byte) []int {
+func (idx *index) near(word []byte, result []int) {
 	idx.hasher.Reset()
 	idx.hasher.Write(word)
 	hash := idx.hasher.Sum64() % idx.size
-	adjList := make([]int, len(idx.index[hash]))
-	copy(adjList, idx.index[hash])
+	pos := copy(result, idx.index[hash])
 
 	tmp := idx.buf[:len(word)-1]
 	for i := 0; i < len(word); i++ {
@@ -79,11 +78,11 @@ func (idx *index) near(word []byte) []int {
 		hash := idx.hasher.Sum64() % idx.size
 		v := idx.index[hash]
 		for _, id := range v {
-			adjList = append(adjList, id)
+			result[pos] = id
+			pos++
 		}
 	}
 
-	return adjList
 }
 
 // skipOneCopy copies the src slice to the dst slice while skipping

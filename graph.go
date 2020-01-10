@@ -86,8 +86,9 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	stopBldAdjTmr := newTimer("buildAdjList")
 	for i := 0; i < len(g.vertices); i++ {
 		cWord := g.vertices[i].word
-		index.nearCount(cWord)
-		adj := index.near(cWord)
+		sz := index.nearCount(cWord)
+		adj := make([]int, sz)
+		index.near(cWord, adj)
 		for _, j := range adj {
 			if distance(cWord, g.vertices[j].word) == 1 {
 				g.adjList[i] = append(g.adjList[i], j)
