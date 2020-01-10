@@ -67,3 +67,14 @@ the biggest time eater is growing the slice, so what if, the user passed in a fi
 near will run until the buffer is filled.  Then it will return the information necessary to:
 1. Determine that near is complete or
 2. Enough information to start back from where it left off
+
+Ways To do this:
+A:
+1. Move the finding of words that are one larger to another function (i.e. the first 5 lines of `near`).  That function will
+take a buffer and return the position within the bucket and a done indicator
+2. Update `near` to return the letter being removed, the position within the bucket, a done state
+
+B:
+1. Add a function which returns the total number of ids that will be copied in
+2. Update `near` to take a buffer and run until it is filled
+3. You call length, create the buffer, then run near
