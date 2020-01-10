@@ -59,3 +59,11 @@ After changes ([]byte)       |
 Things that I've noticed:
 while debugging, after reading the dictionary, the list of vertices, all the byte slices have a length of 3 or 4 but a capacty of over 4000?  This is because the []byte returned by the Scanner is not safe to share as it's just a slice into the buffer the Scanner uses to
 read from (this led to a bug in my code when reading large dictionaries).  I needed to copy that data to my own safe slice.
+
+
+### No Map version of Index
+#### how to speed up index.near
+the biggest time eater is growing the slice, so what if, the user passed in a fixed length buffer
+near will run until the buffer is filled.  Then it will return the information necessary to:
+1. Determine that near is complete or
+2. Enough information to start back from where it left off
