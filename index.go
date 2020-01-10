@@ -59,16 +59,7 @@ func (idx *index) near(word []byte) []int {
 		hash := idx.hasher.Sum64() % idx.size
 		v := idx.index[hash]
 		for _, id := range v {
-			exists := false
-			for j := range adjList {
-				if id == adjList[j] {
-					exists = true
-					break
-				}
-			}
-			if !exists {
-				adjList = append(adjList, id)
-			}
+			adjList = append(adjList, id)
 		}
 	}
 
