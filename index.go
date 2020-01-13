@@ -23,7 +23,7 @@ func newIndex(bufSize int) *index {
 func (idx *index) add(id int, word []byte) {
 	// for each permutation of `word` created by deleting a single letter
 	// add `id` to the index associated with that permutation
-	tmp := idx.buf[:len(word)-1] // make([]byte, len(word)-1)
+	tmp := idx.buf[:len(word)-1]
 	for i := 0; i < len(word); i++ {
 		skipOneCopy(tmp, word, i)
 
