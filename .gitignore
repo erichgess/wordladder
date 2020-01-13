@@ -4,3 +4,4 @@ wordladderMaster
 tmp*.prof
 vendor/
 profiles/benchmarks/
+wordladder.asm
