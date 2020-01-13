@@ -43,7 +43,7 @@ func (idx *index) near(word []byte) []int {
 	adjList := make([]int, l)
 	copy(adjList, idx.index[hash])
 
-	tmp := idx.buf[:len(word)-1] // make([]byte, len(word)-1)
+	tmp := idx.buf[:len(word)-1]
 	for i := 0; i < len(word); i++ {
 		skipOneCopy(tmp, word, i)
 
