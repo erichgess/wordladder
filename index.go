@@ -36,9 +36,6 @@ func (idx *index) add(id int, word []byte) {
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
 		hash := idx.hasher.Sum64() % idx.size
-		if idx.index[hash] == nil {
-			idx.index[hash] = make([]int, 10)
-		}
 		idx.index[hash] = append(idx.index[hash], id)
 	}
 }
