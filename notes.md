@@ -78,3 +78,7 @@ B:
 1. Add a function which returns the total number of ids that will be copied in
 2. Update `near` to take a buffer and run until it is filled
 3. You call length, create the buffer, then run near
+
+### Index Uses Slice Not Map
+#### Performance
+The current form of this version of `wordladder` is now faster than the map based version, it also uses half the memory (811MiB vs 1500MiB)!
