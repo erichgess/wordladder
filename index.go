@@ -53,21 +53,25 @@ performance notes
 	(also duplicate work, the same buckets will be recomputed many many times)
   - Think about how this is pulling in cache lines and moving data around registers and the stack
 */
+
 func (idx *index) nearCount(word []byte) int {
-	count := 0
+	var hashBuffer [48]uint64
+	hashes := hashBuffer[0:(len(word) + 1)]
 	idx.hasher.Reset()
 	idx.hasher.Write(word)
-	hash := idx.hasher.Sum64() % idx.size
-	count += len(idx.index[hash])
-
+	hashes[0] = idx.hasher.Sum64() % idx.size
 	tmp := idx.buf[:len(word)-1]
 	for i := 0; i < len(word); i++ {
 		skipOneCopy(tmp, word, i)
 
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
-		hash := idx.hasher.Sum64() % idx.size
-		l := len(idx.index[hash])
+		hashes[i+1] = idx.hasher.Sum64() % idx.size
+	}
+
+	count := 0
+	for i := 0; i < len(hashes); i++ {
+		l := len(idx.index[hashes[i]])
 		count += l
 	}
 
