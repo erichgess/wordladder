@@ -54,7 +54,8 @@ func (idx *index) nearCount(word []byte) int {
 		idx.hasher.Reset()
 		idx.hasher.Write(tmp)
 		hash := idx.hasher.Sum64() % idx.size
-		count += len(idx.index[hash])
+		l := len(idx.index[hash])
+		count += l
 	}
 
 	return count
