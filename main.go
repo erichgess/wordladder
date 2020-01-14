@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"runtime/pprof"
 )
 
-var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
+var cpuprofile = flag.String("cpuprofile", "", "if set, write cpu profile to this file")
+var memprofile = flag.String("memprofile", "", "if set, write memory profile to this file")
 var dict = flag.String("dict", "./dicts/words", "the file containing the set of words to use")
 var src = flag.String("src", "", "the starting word")
 var dest = flag.String("dest", "", "the word you are trying to reach")
@@ -67,6 +69,18 @@ func main() {
 		}
 	} else if *printGraph {
 		g.PrintAdjList()
+	}
+
+	if *memprofile != "" {
+		runtime.GC()
+		memProfile, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatal("failed to create mem profile file", err)
+		}
+		defer memProfile.Close()
+		if err := pprof.WriteHeapProfile(memProfile); err != nil {
+			log.Fatal("failed to write heap profile", err)
+		}
 	}
 }
 
