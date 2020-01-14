@@ -40,6 +40,19 @@ func (idx *index) add(id int, word []byte) {
 	}
 }
 
+/*
+performance notes
+  - The biggest performance killer is `count += l`, when it's moving a register to the stack.
+  - Is there someway to change this function such that everything can be done exclusively within registers?
+
+  - Ideas:
+  - compute the hashes first into their own slice (all calls the mmr3 hasher are done in one stage of the code, accesses to `idx.index` are in a
+	 second block of code)
+  - have a common buffer for storing the slice of hashes, so we don't have to run make slice with every call
+  - have slice with the length of every bucket, so we don't have to call len(`idx.index[...]`), will reduce layers of indirection and function calls
+	(also duplicate work, the same buckets will be recomputed many many times)
+  - Think about how this is pulling in cache lines and moving data around registers and the stack
+*/
 func (idx *index) nearCount(word []byte) int {
 	count := 0
 	idx.hasher.Reset()
