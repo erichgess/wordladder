@@ -7,10 +7,12 @@ import (
 	"os"
 	"runtime"
 	"runtime/pprof"
+	"runtime/trace"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "if set, write cpu profile to this file")
 var memprofile = flag.String("memprofile", "", "if set, write memory profile to this file")
+var traceprofile = flag.String("trace", "", "if set, write trace to give file")
 var dict = flag.String("dict", "./dicts/words", "the file containing the set of words to use")
 var src = flag.String("src", "", "the starting word")
 var dest = flag.String("dest", "", "the word you are trying to reach")
@@ -24,11 +26,22 @@ func main() {
 
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
+		defer f.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
+	}
+
+	if *traceprofile != "" {
+		f, err := os.Create(*traceprofile)
+		if err != nil {
+			log.Fatal("failed to open trace file", err)
+		}
+		defer f.Close()
+		trace.Start(f)
+		defer trace.Stop()
 	}
 
 	if *dump != "" {
