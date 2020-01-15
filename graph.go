@@ -71,7 +71,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	}
 
 	stopBldIdxTmr := newTimer("buildIndex")
-	index := newIndex(longestWord)
+	index := newIndex(8*1024*1024, longestWord)
 	for i, w := range g.vertices {
 		index.add(i, w.word)
 	}
@@ -84,16 +84,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	// for each word, find words which are only one letter different
 	// and create edges connecting them.
 	stopBldAdjTmr := newTimer("buildAdjList")
-	for i := 0; i < len(g.vertices); i++ {
-		cWord := g.vertices[i].word
-		adj := index.near(cWord)
-		for _, j := range adj {
-			if distance(cWord, g.vertices[j].word) == 1 {
-				g.adjList[i] = append(g.adjList[i], j)
-				g.adjList[j] = append(g.adjList[j], i)
-			}
-		}
-	}
+	g.buildAdjList(index)
 	stopBldAdjTmr()
 
 	if dump != "" {
@@ -105,6 +96,24 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	}
 
 	return &g
+}
+
+func (g *Graph) buildAdjList(index *index) {
+	totalSz := 0
+	for i := 0; i < len(g.vertices); i++ {
+		cWord := g.vertices[i].word
+		sz := index.nearCount(cWord)
+		totalSz += sz
+		adj := make([]int, sz)
+		index.near(cWord, adj)
+		for _, j := range adj {
+			if distance(cWord, g.vertices[j].word) == 1 {
+				g.adjList[i] = append(g.adjList[i], j)
+				g.adjList[j] = append(g.adjList[j], i)
+			}
+		}
+	}
+	fmt.Printf("Avg sz:%f\n", float64(totalSz)/float64(len(g.vertices)))
 }
 
 // Find returns the id of the vertex with the given word, if it is in the graph.

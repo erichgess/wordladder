@@ -22,7 +22,7 @@ func newTimer(name string) func() {
 }
 
 func indexDuplicates(idx *index) {
-	type indexStat struct {
+	/*type indexStat struct {
 		dupes int
 		total int
 	}
@@ -53,7 +53,7 @@ func indexDuplicates(idx *index) {
 		sumPctDupe += float64(c.dupes) / float64(c.total)
 	}
 	fmt.Printf("%d total words were duplicated within buckets across the index\n", totalDupes)
-	fmt.Printf("Avg pct of a bucket that is duplicate: %f\n", 100.0*sumPctDupe/float64(len(duplicates)))
+	fmt.Printf("Avg pct of a bucket that is duplicate: %f\n", 100.0*sumPctDupe/float64(len(duplicates)))*/
 }
 
 func adjListStats(g *Graph) {

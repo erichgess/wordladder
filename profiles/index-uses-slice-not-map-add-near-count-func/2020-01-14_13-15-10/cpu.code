@@ -1,0 +1,202 @@
+Total: 6.66s
+ROUTINE ======================== main.(*Graph).buildAdjList in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+     830ms      2.60s (flat, cum) 39.04% of Total
+         .          .     99:}
+         .          .    100:
+         .          .    101:func (g *Graph) buildAdjList(index *index) {
+         .          .    102:	totalSz := 0
+         .          .    103:	for i := 0; i < len(g.vertices); i++ {
+      20ms       20ms    104:		cWord := g.vertices[i].word
+         .      280ms    105:		sz := index.nearCount(cWord)
+         .          .    106:		totalSz += sz
+         .      180ms    107:		adj := make([]int, sz)
+         .      750ms    108:		index.near(cWord, adj)
+     670ms      670ms    109:		for _, j := range adj {
+      90ms      210ms    110:			if distance(cWord, g.vertices[j].word) == 1 {
+         .      210ms    111:				g.adjList[i] = append(g.adjList[i], j)
+      50ms      280ms    112:				g.adjList[j] = append(g.adjList[j], i)
+         .          .    113:			}
+         .          .    114:		}
+         .          .    115:	}
+         .          .    116:	fmt.Printf("Avg sz:%f\n", float64(totalSz)/float64(len(g.vertices)))
+         .          .    117:}
+ROUTINE ======================== main.(*index).add in /Users/erichgess/go/src/erichgess/wordladder/index.go
+      30ms      450ms (flat, cum)  6.76% of Total
+         .          .     29:func (idx *index) add(id int, word []byte) {
+         .          .     30:	// for each permutation of `word` created by deleting a single letter
+         .          .     31:	// add `id` to the index associated with that permutation
+         .          .     32:	tmp := idx.buf[:len(word)-1]
+         .          .     33:	for i := 0; i < len(word); i++ {
+         .       10ms     34:		skipOneCopy(tmp, word, i)
+         .          .     35:
+         .          .     36:		idx.hasher.Reset()
+         .          .     37:		idx.hasher.Write(tmp)
+         .       10ms     38:		hash := idx.hasher.Sum64() % idx.size
+      30ms      430ms     39:		idx.index[hash] = append(idx.index[hash], id)
+         .          .     40:	}
+         .          .     41:}
+         .          .     42:
+         .          .     43:/*
+         .          .     44:performance notes
+ROUTINE ======================== main.(*index).near in /Users/erichgess/go/src/erichgess/wordladder/index.go
+      80ms      750ms (flat, cum) 11.26% of Total
+         .          .     76:
+         .          .     77:func (idx *index) near(word []byte, result []int) {
+         .          .     78:	idx.hasher.Reset()
+         .          .     79:	idx.hasher.Write(word)
+         .          .     80:	hash := idx.hasher.Sum64() % idx.size
+         .      110ms     81:	pos := copy(result, idx.index[hash])
+         .          .     82:
+         .          .     83:	tmp := idx.buf[:len(word)-1]
+         .          .     84:	for i := 0; i < len(word); i++ {
+         .          .     85:		skipOneCopy(tmp, word, i)
+         .          .     86:
+         .          .     87:		idx.hasher.Reset()
+         .       20ms     88:		idx.hasher.Write(tmp)
+         .       30ms     89:		hash := idx.hasher.Sum64() % idx.size
+      70ms       70ms     90:		v := idx.index[hash]
+      10ms      520ms     91:		pos = copy(result[pos:], v)
+         .          .     92:	}
+         .          .     93:
+         .          .     94:}
+         .          .     95:
+         .          .     96:// skipOneCopy copies the src slice to the dst slice while skipping
+ROUTINE ======================== main.(*index).nearCount in /Users/erichgess/go/src/erichgess/wordladder/index.go
+     240ms      280ms (flat, cum)  4.20% of Total
+         .          .     58:	idx.hasher.Reset()
+         .          .     59:	idx.hasher.Write(word)
+         .          .     60:	hash := idx.hasher.Sum64() % idx.size
+         .          .     61:	count += len(idx.index[hash])
+         .          .     62:
+      40ms       40ms     63:	tmp := idx.buf[:len(word)-1]
+      10ms       10ms     64:	for i := 0; i < len(word); i++ {
+         .          .     65:		skipOneCopy(tmp, word, i)
+         .          .     66:
+         .          .     67:		idx.hasher.Reset()
+         .       20ms     68:		idx.hasher.Write(tmp)
+      10ms       30ms     69:		hash := idx.hasher.Sum64() % idx.size
+      30ms       30ms     70:		l := len(idx.index[hash])
+     150ms      150ms     71:		count += l
+         .          .     72:	}
+         .          .     73:
+         .          .     74:	return count
+         .          .     75:}
+         .          .     76:
+ROUTINE ======================== main.LoadDictionary in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+      50ms      3.32s (flat, cum) 49.85% of Total
+         .          .     49:	}
+         .          .     50:
+         .          .     51:	// read the dictionary and for each word at it as a vertex in the graph.
+         .          .     52:	longestWord := 0
+         .          .     53:	scanner := bufio.NewScanner(file)
+         .       20ms     54:	for scanner.Scan() {
+         .          .     55:		by := scanner.Bytes()
+         .          .     56:		word := make([]byte, len(by))
+         .          .     57:		copy(word, by)
+      30ms      110ms     58:		g.vertices = append(g.vertices, Vertex{word})
+         .          .     59:		if len(word) > longestWord {
+         .          .     60:			longestWord = len(word)
+         .          .     61:		}
+         .          .     62:	}
+         .          .     63:
+         .          .     64:	if dump != "" {
+         .          .     65:		g.dumpVertices(dump + "/vertices.txt")
+         .          .     66:	}
+         .          .     67:
+         .          .     68:	g.adjList = make([][]int, len(g.vertices))
+         .          .     69:	for i := range g.adjList {
+      20ms       20ms     70:		g.adjList[i] = make([]int, 0)
+         .          .     71:	}
+         .          .     72:
+         .          .     73:	stopBldIdxTmr := newTimer("buildIndex")
+         .      120ms     74:	index := newIndex(8*1024*1024, longestWord)
+         .          .     75:	for i, w := range g.vertices {
+         .      450ms     76:		index.add(i, w.word)
+         .          .     77:	}
+         .          .     78:	stopBldIdxTmr()
+         .          .     79:
+         .          .     80:	if stats {
+         .          .     81:		indexDuplicates(index)
+         .          .     82:	}
+         .          .     83:
+         .          .     84:	// for each word, find words which are only one letter different
+         .          .     85:	// and create edges connecting them.
+         .          .     86:	stopBldAdjTmr := newTimer("buildAdjList")
+         .      2.60s     87:	g.buildAdjList(index)
+         .          .     88:	stopBldAdjTmr()
+         .          .     89:
+         .          .     90:	if dump != "" {
+         .          .     91:		g.dumpAdjList(dump + "/adj.txt")
+         .          .     92:	}
+ROUTINE ======================== main.distance in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+     120ms      120ms (flat, cum)  1.80% of Total
+         .          .    281:}
+         .          .    282:
+         .          .    283:func distance(w1, w2 []byte) int {
+         .          .    284:	dist := len(w1) - len(w2)
+         .          .    285:	if dist < 0 {
+      10ms       10ms    286:		dist = -dist
+         .          .    287:	}
+         .          .    288:	l := len(w1)
+         .          .    289:	if l > len(w2) {
+         .          .    290:		l = len(w2)
+         .          .    291:	}
+         .          .    292:	for i := 0; i < l; i++ {
+      20ms       20ms    293:		if w1[i] != w2[i] {
+      90ms       90ms    294:			dist++
+         .          .    295:		}
+         .          .    296:	}
+         .          .    297:
+         .          .    298:	return dist
+         .          .    299:}
+ROUTINE ======================== main.main in /Users/erichgess/go/src/erichgess/wordladder/main.go
+         0      3.32s (flat, cum) 49.85% of Total
+         .          .     47:	if *dump != "" {
+         .          .     48:		createPathIfNotExists(*dump)
+         .          .     49:	}
+         .          .     50:
+         .          .     51:	fmt.Println("Loading Dictionary")
+         .      3.32s     52:	g := LoadDictionary(*dict, *perfStats, *dump)
+         .          .     53:	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
+         .          .     54:
+         .          .     55:	if *dictStats {
+         .          .     56:		dictionaryStats(*dict)
+         .          .     57:	}
+ROUTINE ======================== main.newIndex in /Users/erichgess/go/src/erichgess/wordladder/index.go
+      90ms      120ms (flat, cum)  1.80% of Total
+         .          .     12:	buf    []byte // a shared buffer used for copying intermediate words
+         .          .     13:	size   uint64
+         .          .     14:}
+         .          .     15:
+         .          .     16:func newIndex(size int, bufSize int) *index {
+         .       20ms     17:	idx := make([][]int, size)
+         .          .     18:	for i := range idx {
+      90ms      100ms     19:		idx[i] = make([]int, 0)
+         .          .     20:	}
+         .          .     21:	return &index{
+         .          .     22:		hasher: murmur3.New64(),
+         .          .     23:		buf:    make([]byte, 0, bufSize),
+         .          .     24:		index:  idx,
+ROUTINE ======================== main.skipOneCopy in /Users/erichgess/go/src/erichgess/wordladder/index.go
+         0       10ms (flat, cum)  0.15% of Total
+         .          .     96:// skipOneCopy copies the src slice to the dst slice while skipping
+         .          .     97:// the byte at index `skip`.  `dst` should have a length >= `len(src)-1`.
+         .          .     98:func skipOneCopy(dst []byte, src []byte, skip int) {
+         .          .     99:	tmpA := dst[:skip]
+         .          .    100:	tmpB := dst[skip:]
+         .       10ms    101:	copy(tmpA, src[:skip])
+         .          .    102:	copy(tmpB, src[skip+1:])
+         .          .    103:}
+ROUTINE ======================== runtime.main in /usr/local/Cellar/go/1.13.3/libexec/src/runtime/proc.go
+         0      3.32s (flat, cum) 49.85% of Total
+         .          .    198:		// A program compiled with -buildmode=c-archive or c-shared
+         .          .    199:		// has a main, but it is not executed.
+         .          .    200:		return
+         .          .    201:	}
+         .          .    202:	fn := main_main // make an indirect call, as the linker doesn't know the address of the main package when laying down the runtime
+         .      3.32s    203:	fn()
+         .          .    204:	if raceenabled {
+         .          .    205:		racefini()
+         .          .    206:	}
+         .          .    207:
+         .          .    208:	// Make racy client program work: if panicking on
