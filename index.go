@@ -78,6 +78,20 @@ func (idx *index) nearCount(word []byte) int {
 	return count
 }
 
+/*
+  Possible changes for performance:
+  Observation: the slowest part of this function is now `pos = copy(...)`
+
+  What if: this function just returned a slice with the bucket indices
+
+  Another option: make this batchable.  Change the flow so that:
+  1. get list of hashes of a word
+  2. For each hash:
+  3.  Call a function to get adjacent words passing the hash and a buffer
+  4.  That function will return when the bucket is exhausted or teh buffer is full, it will return a means to know if the hash is complete
+  5.  Copy buffer to adj list, if not complete recall with buffer:  this copy could be the slowest but if we preallocate the slice then it will be a lot less copying than the current code
+  6.  If hash is complete, move to the next hash
+*/
 func (idx *index) near(word []byte, result []int) {
 	var hashBuffer [48]uint64
 	hashes := hashBuffer[0:(len(word) + 1)]
