@@ -111,6 +111,7 @@ func (idx *index) near(word []byte, result []int) {
 	for i := 0; i < len(hashes); i++ {
 		hash := hashes[i]
 		v := idx.index[hash]
+
 		pos = copy(result[pos:], v)
 	}
 }
