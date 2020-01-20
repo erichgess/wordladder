@@ -5,3 +5,4 @@ tmp*.prof
 vendor/
 profiles/benchmarks/
 wordladder.asm
+~\$wordladder - analysis.xlsx
