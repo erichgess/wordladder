@@ -17,7 +17,7 @@ func newTimer(name string) func() {
 	return func() {
 		stop := time.Now()
 		total := stop.Sub(start).Seconds()
-		fmt.Printf("%s took %fs\n", name, total)
+		fmt.Printf("%s time (sec): %f\n", name, total)
 	}
 }
 

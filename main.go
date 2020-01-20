@@ -20,6 +20,7 @@ var perfStats = flag.Bool("stats", false, "print out stats about the constructio
 var printGraph = flag.Bool("print", false, "prints the graph to STDIO, overrides path finding")
 var dump = flag.String("dump", "", "when set, intermediate data will be dumped to the given path")
 var dictStats = flag.Bool("dict-stats", false, "print out statistics for the given dictionary")
+var numBuckets = flag.Int("num-buckets", 8*1024*1024, "set the number of buckets used in the word locality index")
 
 func main() {
 	flag.Parse()
@@ -49,7 +50,7 @@ func main() {
 	}
 
 	fmt.Println("Loading Dictionary")
-	g := LoadDictionary(*dict, *perfStats, *dump)
+	g := LoadDictionary(*dict, *numBuckets, *perfStats, *dump)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
 	if *dictStats {

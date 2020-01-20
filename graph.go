@@ -36,7 +36,7 @@ type Graph struct {
 //
 // The file format is:
 // <New line separated list of words>
-func LoadDictionary(path string, stats bool, dump string) *Graph {
+func LoadDictionary(path string, numBuckets int, stats bool, dump string) *Graph {
 	defer newTimer("LoadDictionary")()
 	file, err := os.Open(path)
 	if err != nil {
@@ -71,7 +71,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	}
 
 	stopBldIdxTmr := newTimer("buildIndex")
-	index := newIndex(8*1024*1024, longestWord)
+	index := newIndex(numBuckets, longestWord)
 	for i, w := range g.vertices {
 		index.add(i, w.word)
 	}
