@@ -9,7 +9,6 @@ import (
 	"math"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -37,8 +36,9 @@ type Graph struct {
 //
 // The file format is:
 // <New line separated list of words>
-func LoadDictionary(path string, numBuckets int, stats bool, dump string) *Graph {
-	defer newTimer("LoadDictionary (" + strconv.Itoa(numBuckets) + ")")()
+func LoadDictionary(path string, numBuckets int, indexStats bool, stats bool, dump string) *Graph {
+	AddStatInt("Num Buckets", numBuckets)
+	defer newTimer("LoadDictionary")()
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -78,9 +78,8 @@ func LoadDictionary(path string, numBuckets int, stats bool, dump string) *Graph
 	}
 	stopBldIdxTmr()
 
-	if stats {
+	if indexStats {
 		index.printStats()
-		indexDuplicates(index)
 	}
 
 	// for each word, find words which are only one letter different

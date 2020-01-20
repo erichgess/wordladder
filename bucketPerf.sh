@@ -1,7 +1,7 @@
 #!/bin/bash
-./wordladder --dict ./dicts/million.dict --num-buckets 100000 | grep LoadDictionary | sed -e 's/^LoadDictionary (\(.*\)) time (sec): \(.*\)$/\1,\2/g'
-./wordladder --dict ./dicts/million.dict --num-buckets 500000 | grep LoadDictionary | sed -e 's/^LoadDictionary (\(.*\)) time (sec): \(.*\)$/\1,\2/g'
-./wordladder --dict ./dicts/million.dict --num-buckets 1000000 | grep LoadDictionary | sed -e 's/^LoadDictionary (\(.*\)) time (sec): \(.*\)$/\1,\2/g'
-./wordladder --dict ./dicts/million.dict --num-buckets 5000000 | grep LoadDictionary | sed -e 's/^LoadDictionary (\(.*\)) time (sec): \(.*\)$/\1,\2/g'
-./wordladder --dict ./dicts/million.dict --num-buckets 10000000 | grep LoadDictionary | sed -e 's/^LoadDictionary (\(.*\)) time (sec): \(.*\)$/\1,\2/g'
-./wordladder --dict ./dicts/million.dict --num-buckets 50000000 | grep LoadDictionary | sed -e 's/^LoadDictionary (\(.*\)) time (sec): \(.*\)$/\1,\2/g'
+./wordladder --dict ./dicts/million.dict --index-stats --csv --num-buckets 100000 | tail -n 2
+./wordladder --dict ./dicts/million.dict --index-stats --csv --num-buckets 500000 | tail -n 1
+./wordladder --dict ./dicts/million.dict --index-stats --csv --num-buckets 1000000 | tail -n 1
+./wordladder --dict ./dicts/million.dict --index-stats --csv --num-buckets 5000000 | tail -n 1
+./wordladder --dict ./dicts/million.dict --index-stats --csv --num-buckets 10000000 | tail -n 1
+./wordladder --dict ./dicts/million.dict --index-stats --csv --num-buckets 50000000 | tail -n 1

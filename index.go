@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"hash"
 	"sort"
 
@@ -128,9 +127,8 @@ func skipOneCopy(dst []byte, src []byte, skip int) {
 }
 
 func (idx *index) printStats() {
-	fmt.Printf("\nIndex Stats:\n")
-	fmt.Printf("Buffer: %d\n", cap(idx.buf))
-	fmt.Printf("Buckets: %d\n", len(idx.index))
+	AddStatInt("Index Buffer", cap(idx.buf))
+	AddStatInt("Index Buckets", len(idx.index))
 
 	// find stats about buckets
 	lengths := make([]int, len(idx.index))
@@ -148,19 +146,17 @@ func (idx *index) printStats() {
 	p95 := lengths[(95*l)/100]
 	p99 := lengths[(99*l)/100]
 
-	fmt.Printf("Bucket Stats:\n")
-	fmt.Printf("Min: %d\n", min)
-	fmt.Printf("Max: %d\n", max)
-	fmt.Printf("p50: %d\n", median)
-	fmt.Printf("p75: %d\n", p75)
-	fmt.Printf("p90: %d\n", p90)
-	fmt.Printf("p95: %d\n", p95)
-	fmt.Printf("p99: %d\n", p99)
+	AddStatInt("Index Min", min)
+	AddStatInt("Index Max", max)
+	AddStatInt("Index p50", median)
+	AddStatInt("Index p75", p75)
+	AddStatInt("Index p90", p90)
+	AddStatInt("Index p95", p95)
+	AddStatInt("Index p99", p99)
 
 	sum := 0
 	for i := range lengths {
 		sum += lengths[i]
 	}
-	fmt.Printf("Mean: %f\n", float32(sum)/float32(l))
-	fmt.Println()
+	AddStatFloat("Index Mean", float64(sum)/float64(l))
 }

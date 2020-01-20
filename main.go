@@ -17,10 +17,12 @@ var dict = flag.String("dict", "./dicts/words", "the file containing the set of 
 var src = flag.String("src", "", "the starting word")
 var dest = flag.String("dest", "", "the word you are trying to reach")
 var perfStats = flag.Bool("stats", false, "print out stats about the construction of the word graph")
+var indexStats = flag.Bool("index-stats", false, "print stats about the index used to construct the graph")
 var printGraph = flag.Bool("print", false, "prints the graph to STDIO, overrides path finding")
 var dump = flag.String("dump", "", "when set, intermediate data will be dumped to the given path")
 var dictStats = flag.Bool("dict-stats", false, "print out statistics for the given dictionary")
 var numBuckets = flag.Int("num-buckets", 8*1024*1024, "set the number of buckets used in the word locality index")
+var csv = flag.Bool("csv", false, "format stats in CSV")
 
 func main() {
 	flag.Parse()
@@ -50,7 +52,7 @@ func main() {
 	}
 
 	fmt.Println("Loading Dictionary")
-	g := LoadDictionary(*dict, *numBuckets, *dictStats, *dump)
+	g := LoadDictionary(*dict, *numBuckets, *indexStats, *perfStats, *dump)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
 	if *dictStats {
@@ -85,7 +87,9 @@ func main() {
 		g.PrintAdjList()
 	}
 
-	if *perfStats {
+	if *csv {
+		PrintStatsCSV(true)
+	} else {
 		PrintStats()
 	}
 
