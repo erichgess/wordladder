@@ -9,6 +9,7 @@ import (
 	"math"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -37,7 +38,7 @@ type Graph struct {
 // The file format is:
 // <New line separated list of words>
 func LoadDictionary(path string, numBuckets int, stats bool, dump string) *Graph {
-	defer newTimer("LoadDictionary")()
+	defer newTimer("LoadDictionary (" + strconv.Itoa(numBuckets) + ")")()
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
