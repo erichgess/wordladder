@@ -129,7 +129,7 @@ func skipOneCopy(dst []byte, src []byte, skip int) {
 
 func (idx *index) printStats() {
 	fmt.Printf("\nIndex Stats:\n")
-	fmt.Printf("Buffer: %d\n", len(idx.buf))
+	fmt.Printf("Buffer: %d\n", cap(idx.buf))
 	fmt.Printf("Buckets: %d\n", len(idx.index))
 
 	// find stats about buckets
