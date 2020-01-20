@@ -1,0 +1,116 @@
+Total: 804.20MB
+ROUTINE ======================== main.(*Graph).buildAdjList in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+  353.63MB   353.63MB (flat, cum) 43.97% of Total
+         .          .    103:	totalSz := 0
+         .          .    104:	for i := 0; i < len(g.vertices); i++ {
+         .          .    105:		cWord := g.vertices[i].word
+         .          .    106:		sz := index.nearCount(cWord)
+         .          .    107:		totalSz += sz
+  229.61MB   229.61MB    108:		adj := make([]int, sz)
+         .          .    109:		index.near(cWord, adj)
+         .          .    110:		for _, j := range adj {
+         .          .    111:			if distance(cWord, g.vertices[j].word) == 1 {
+   67.51MB    67.51MB    112:				g.adjList[i] = append(g.adjList[i], j)
+   56.51MB    56.51MB    113:				g.adjList[j] = append(g.adjList[j], i)
+         .          .    114:			}
+         .          .    115:		}
+         .          .    116:	}
+         .          .    117:	fmt.Printf("Avg sz:%f\n", float64(totalSz)/float64(len(g.vertices)))
+         .          .    118:}
+ROUTINE ======================== main.(*index).add in /Users/erichgess/go/src/erichgess/wordladder/index.go
+   98.50MB    98.50MB (flat, cum) 12.25% of Total
+         .          .     36:		skipOneCopy(tmp, word, i)
+         .          .     37:
+         .          .     38:		idx.hasher.Reset()
+         .          .     39:		idx.hasher.Write(tmp)
+         .          .     40:		hash := idx.hasher.Sum64() % idx.size
+   98.50MB    98.50MB     41:		idx.index[hash] = append(idx.index[hash], id)
+         .          .     42:	}
+         .          .     43:}
+         .          .     44:
+         .          .     45:/*
+         .          .     46:performance notes
+ROUTINE ======================== main.LoadDictionary in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+  160.07MB   804.20MB (flat, cum)   100% of Total
+         .          .     51:	// read the dictionary and for each word at it as a vertex in the graph.
+         .          .     52:	longestWord := 0
+         .          .     53:	scanner := bufio.NewScanner(file)
+         .          .     54:	for scanner.Scan() {
+         .          .     55:		by := scanner.Bytes()
+      10MB       10MB     56:		word := make([]byte, len(by))
+         .          .     57:		copy(word, by)
+  127.18MB   127.18MB     58:		g.vertices = append(g.vertices, Vertex{word})
+         .          .     59:		if len(word) > longestWord {
+         .          .     60:			longestWord = len(word)
+         .          .     61:		}
+         .          .     62:	}
+         .          .     63:
+         .          .     64:	if dump != "" {
+         .          .     65:		g.dumpVertices(dump + "/vertices.txt")
+         .          .     66:	}
+         .          .     67:
+   22.89MB    22.89MB     68:	g.adjList = make([][]int, len(g.vertices))
+         .          .     69:	for i := range g.adjList {
+         .          .     70:		g.adjList[i] = make([]int, 0)
+         .          .     71:	}
+         .          .     72:
+         .          .     73:	stopBldIdxTmr := newTimer("buildIndex")
+         .      192MB     74:	index := newIndex(8*1024*1024, longestWord)
+         .          .     75:	for i, w := range g.vertices {
+         .    98.50MB     76:		index.add(i, w.word)
+         .          .     77:	}
+         .          .     78:	stopBldIdxTmr()
+         .          .     79:
+         .          .     80:	if stats {
+         .          .     81:		index.printStats()
+         .          .     82:		indexDuplicates(index)
+         .          .     83:	}
+         .          .     84:
+         .          .     85:	// for each word, find words which are only one letter different
+         .          .     86:	// and create edges connecting them.
+         .          .     87:	stopBldAdjTmr := newTimer("buildAdjList")
+         .   353.63MB     88:	g.buildAdjList(index)
+         .          .     89:	stopBldAdjTmr()
+         .          .     90:
+         .          .     91:	if dump != "" {
+         .          .     92:		g.dumpAdjList(dump + "/adj.txt")
+         .          .     93:	}
+ROUTINE ======================== main.main in /Users/erichgess/go/src/erichgess/wordladder/main.go
+         0   804.20MB (flat, cum)   100% of Total
+         .          .     47:	if *dump != "" {
+         .          .     48:		createPathIfNotExists(*dump)
+         .          .     49:	}
+         .          .     50:
+         .          .     51:	fmt.Println("Loading Dictionary")
+         .   804.20MB     52:	g := LoadDictionary(*dict, *perfStats, *dump)
+         .          .     53:	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
+         .          .     54:
+         .          .     55:	if *dictStats {
+         .          .     56:		dictionaryStats(*dict)
+         .          .     57:	}
+ROUTINE ======================== main.newIndex in /Users/erichgess/go/src/erichgess/wordladder/index.go
+     192MB      192MB (flat, cum) 23.87% of Total
+         .          .     14:	buf    []byte // a shared buffer used for copying intermediate words
+         .          .     15:	size   uint64
+         .          .     16:}
+         .          .     17:
+         .          .     18:func newIndex(size int, bufSize int) *index {
+     192MB      192MB     19:	idx := make([][]int, size)
+         .          .     20:	for i := range idx {
+         .          .     21:		idx[i] = make([]int, 0)
+         .          .     22:	}
+         .          .     23:	return &index{
+         .          .     24:		hasher: murmur3.New64(),
+ROUTINE ======================== runtime.main in /usr/local/Cellar/go/1.13.3/libexec/src/runtime/proc.go
+         0   804.20MB (flat, cum)   100% of Total
+         .          .    198:		// A program compiled with -buildmode=c-archive or c-shared
+         .          .    199:		// has a main, but it is not executed.
+         .          .    200:		return
+         .          .    201:	}
+         .          .    202:	fn := main_main // make an indirect call, as the linker doesn't know the address of the main package when laying down the runtime
+         .   804.20MB    203:	fn()
+         .          .    204:	if raceenabled {
+         .          .    205:		racefini()
+         .          .    206:	}
+         .          .    207:
+         .          .    208:	// Make racy client program work: if panicking on

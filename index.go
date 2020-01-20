@@ -128,6 +128,7 @@ func skipOneCopy(dst []byte, src []byte, skip int) {
 }
 
 func (idx *index) printStats() {
+	fmt.Printf("\nIndex Stats:\n")
 	fmt.Printf("Buffer: %d\n", len(idx.buf))
 	fmt.Printf("Buckets: %d\n", len(idx.index))
 
@@ -147,7 +148,7 @@ func (idx *index) printStats() {
 	p95 := lengths[(95*l)/100]
 	p99 := lengths[(99*l)/100]
 
-	fmt.Printf("\nBucket Stats:\n")
+	fmt.Printf("Bucket Stats:\n")
 	fmt.Printf("Min: %d\n", min)
 	fmt.Printf("Max: %d\n", max)
 	fmt.Printf("p50: %d\n", median)
