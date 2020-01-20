@@ -50,7 +50,7 @@ func main() {
 	}
 
 	fmt.Println("Loading Dictionary")
-	g := LoadDictionary(*dict, *numBuckets, *perfStats, *dump)
+	g := LoadDictionary(*dict, *numBuckets, *dictStats, *dump)
 	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
 
 	if *dictStats {
@@ -83,6 +83,10 @@ func main() {
 		}
 	} else if *printGraph {
 		g.PrintAdjList()
+	}
+
+	if *perfStats {
+		PrintStats()
 	}
 
 	if *memprofile != "" {
