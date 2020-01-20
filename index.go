@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"hash"
+	"sort"
 
 	"github.com/spaolacci/murmur3"
 )
@@ -123,4 +125,41 @@ func skipOneCopy(dst []byte, src []byte, skip int) {
 	tmpB := dst[skip:]
 	copy(tmpA, src[:skip])
 	copy(tmpB, src[skip+1:])
+}
+
+func (idx *index) printStats() {
+	fmt.Printf("Buffer: %d\n", len(idx.buf))
+	fmt.Printf("Buckets: %d\n", len(idx.index))
+
+	// find stats about buckets
+	lengths := make([]int, len(idx.index))
+	for i := range idx.index {
+		lengths[i] = len(idx.index[i])
+	}
+
+	sort.Ints(lengths)
+	min := lengths[0]
+	l := len(lengths)
+	max := lengths[l-1]
+	median := lengths[l/2]
+	p75 := lengths[(3*l)/4]
+	p90 := lengths[(90*l)/100]
+	p95 := lengths[(95*l)/100]
+	p99 := lengths[(99*l)/100]
+
+	fmt.Printf("\nBucket Stats:\n")
+	fmt.Printf("Min: %d\n", min)
+	fmt.Printf("Max: %d\n", max)
+	fmt.Printf("p50: %d\n", median)
+	fmt.Printf("p75: %d\n", p75)
+	fmt.Printf("p90: %d\n", p90)
+	fmt.Printf("p95: %d\n", p95)
+	fmt.Printf("p99: %d\n", p99)
+
+	sum := 0
+	for i := range lengths {
+		sum += lengths[i]
+	}
+	fmt.Printf("Mean: %f\n", float32(sum)/float32(l))
+	fmt.Println()
 }

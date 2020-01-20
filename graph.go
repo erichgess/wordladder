@@ -78,6 +78,7 @@ func LoadDictionary(path string, stats bool, dump string) *Graph {
 	stopBldIdxTmr()
 
 	if stats {
+		index.printStats()
 		indexDuplicates(index)
 	}
 
