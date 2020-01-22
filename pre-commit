@@ -4,6 +4,7 @@ TMP_FILE="/tmp/wordladder.stat"
 rm "${TMP_FILE}"
 
 files=`git diff --cached --name-status | awk '{print $2}'`
+echo ${files}
 hasGo="NO"
 for f in ${files}; do
     if [ ${f: -3} == ".go" ]
