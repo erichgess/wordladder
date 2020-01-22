@@ -9,6 +9,7 @@ For examples:
 2. "cat" and "cats" are adjacent
 3. "cat" and "bot" are not adjacent
 4. "cat" and "cots" are not adjacent
+
 */
 
 import (
