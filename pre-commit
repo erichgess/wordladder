@@ -17,7 +17,7 @@ done;
 
 if [ "${hasGo}" == "NO" ]
 then
-    echo "Skipping perf test: no Go files modified"
+    echo "Skipping performance test: no Go files modified"
     exit 0
 else
     echo "Running performance test"
