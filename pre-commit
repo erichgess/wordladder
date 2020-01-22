@@ -1,11 +1,12 @@
 #!/bin/sh
 
 TMP_FILE="/tmp/wordladder.stat"
-rm "${TMP_FILE}"
+if [ -r "${TMP_FILE}" ]
+then
+    rm "${TMP_FILE}"
+fi
 
 files=`git diff --cached --name-status | awk '{print $2}'`
-echo ${files}
-hasGo="NO"
 for f in ${files}; do
     if [ ${f: -3} == ".go" ]
     then
@@ -16,8 +17,10 @@ done;
 echo "hasGo" ${hasGo}
 if [ ${hasGo} == "NO" ]
 then
-    echo "Stopping"
+    echo "Skipping perf test: no Go files modified"
     exit 0
+else
+    echo "Running performance test"
 fi
 
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
