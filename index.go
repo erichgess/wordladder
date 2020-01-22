@@ -3,6 +3,12 @@ package main
 /*
 index enables quick look ups of words that are adjacent to a given word.  Where adjacent means that two words
 diff by a single letter.
+
+For examples:
+1. "cat" and "bat" are adjacent
+2. "cat" and "cats" are adjacent
+3. "cat" and "bot" are not adjacent
+4. "cat" and "cots" are not adjacent
 */
 
 import (
