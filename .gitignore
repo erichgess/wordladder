@@ -1,7 +1,7 @@
 wordladder
 wordladderMaster
 *.svg
-tmp*.prof
+tmp*
 vendor/
 profiles/benchmarks/
 wordladder.asm
