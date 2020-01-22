@@ -1,0 +1,134 @@
+Total: 797.67MB
+ROUTINE ======================== main.(*Graph).buildAdjList in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+  354.64MB   354.64MB (flat, cum) 44.46% of Total
+         .          .    103:	totalSz := 0
+         .          .    104:	for i := 0; i < len(g.vertices); i++ {
+         .          .    105:		cWord := g.vertices[i].word
+         .          .    106:		sz := index.nearCount(cWord)
+         .          .    107:		totalSz += sz
+  232.61MB   232.61MB    108:		adj := make([]int, sz)
+         .          .    109:		index.near(cWord, adj)
+         .          .    110:		for _, j := range adj {
+         .          .    111:			if distance(cWord, g.vertices[j].word) == 1 {
+   63.51MB    63.51MB    112:				g.adjList[i] = append(g.adjList[i], j)
+   58.52MB    58.52MB    113:				g.adjList[j] = append(g.adjList[j], i)
+         .          .    114:			}
+         .          .    115:		}
+         .          .    116:	}
+         .          .    117:	fmt.Printf("Avg sz:%f\n", float64(totalSz)/float64(len(g.vertices)))
+         .          .    118:}
+ROUTINE ======================== main.(*index).add in /Users/erichgess/go/src/erichgess/wordladder/index.go
+      90MB       90MB (flat, cum) 11.28% of Total
+         .          .     40:		skipOneCopy(tmp, word, i)
+         .          .     41:
+         .          .     42:		idx.hasher.Reset()
+         .          .     43:		idx.hasher.Write(tmp)
+         .          .     44:		hash := idx.hasher.Sum64() % idx.size
+      90MB       90MB     45:		idx.index[hash] = append(idx.index[hash], id)
+         .          .     46:	}
+         .          .     47:}
+         .          .     48:
+         .          .     49:/*
+         .          .     50:performance notes
+ROUTINE ======================== main.LoadDictionary in /Users/erichgess/go/src/erichgess/wordladder/graph.go
+  159.86MB   796.51MB (flat, cum) 99.86% of Total
+         .          .     52:	// read the dictionary and for each word at it as a vertex in the graph.
+         .          .     53:	longestWord := 0
+         .          .     54:	scanner := bufio.NewScanner(file)
+         .          .     55:	for scanner.Scan() {
+         .          .     56:		by := scanner.Bytes()
+    8.50MB     8.50MB     57:		word := make([]byte, len(by))
+         .          .     58:		copy(word, by)
+  128.47MB   128.47MB     59:		g.vertices = append(g.vertices, Vertex{word})
+         .          .     60:		if len(word) > longestWord {
+         .          .     61:			longestWord = len(word)
+         .          .     62:		}
+         .          .     63:	}
+         .          .     64:
+         .          .     65:	if dump != "" {
+         .          .     66:		g.dumpVertices(dump + "/vertices.txt")
+         .          .     67:	}
+         .          .     68:
+   22.89MB    22.89MB     69:	g.adjList = make([][]int, len(g.vertices))
+         .          .     70:	for i := range g.adjList {
+         .          .     71:		g.adjList[i] = make([]int, 0)
+         .          .     72:	}
+         .          .     73:
+         .          .     74:	stopBldIdxTmr := newTimer("buildIndex")
+         .      192MB     75:	index := newIndex(numBuckets, longestWord)
+         .          .     76:	for i, w := range g.vertices {
+         .       90MB     77:		index.add(i, w.word)
+         .          .     78:	}
+         .          .     79:	stopBldIdxTmr()
+         .          .     80:
+         .          .     81:	if indexStats {
+         .          .     82:		index.printStats()
+         .          .     83:	}
+         .          .     84:
+         .          .     85:	// for each word, find words which are only one letter different
+         .          .     86:	// and create edges connecting them.
+         .          .     87:	stopBldAdjTmr := newTimer("buildAdjList")
+         .   354.64MB     88:	g.buildAdjList(index)
+         .          .     89:	stopBldAdjTmr()
+         .          .     90:
+         .          .     91:	if dump != "" {
+         .          .     92:		g.dumpAdjList(dump + "/adj.txt")
+         .          .     93:	}
+ROUTINE ======================== main.main in /Users/erichgess/go/src/erichgess/wordladder/main.go
+         0   797.67MB (flat, cum)   100% of Total
+         .          .     31:		f, err := os.Create(*cpuprofile)
+         .          .     32:		defer f.Close()
+         .          .     33:		if err != nil {
+         .          .     34:			log.Fatal(err)
+         .          .     35:		}
+         .     1.16MB     36:		pprof.StartCPUProfile(f)
+         .          .     37:		defer pprof.StopCPUProfile()
+         .          .     38:	}
+         .          .     39:
+         .          .     40:	if *traceprofile != "" {
+         .          .     41:		f, err := os.Create(*traceprofile)
+         .          .     42:		if err != nil {
+         .          .     43:			log.Fatal("failed to open trace file", err)
+         .          .     44:		}
+         .          .     45:		defer f.Close()
+         .          .     46:		trace.Start(f)
+         .          .     47:		defer trace.Stop()
+         .          .     48:	}
+         .          .     49:
+         .          .     50:	if *dump != "" {
+         .          .     51:		createPathIfNotExists(*dump)
+         .          .     52:	}
+         .          .     53:
+         .          .     54:	fmt.Println("Loading Dictionary")
+         .   796.51MB     55:	g := LoadDictionary(*dict, *numBuckets, *indexStats, *perfStats, *dump)
+         .          .     56:	fmt.Printf("Words: %d\tEdges: %d\n", g.WordCount(), g.EdgeCount())
+         .          .     57:
+         .          .     58:	if *dictStats {
+         .          .     59:		dictionaryStats(*dict)
+         .          .     60:	}
+ROUTINE ======================== main.newIndex in /Users/erichgess/go/src/erichgess/wordladder/index.go
+     192MB      192MB (flat, cum) 24.07% of Total
+         .          .     18:	buf    []byte // a shared buffer used for copying intermediate words
+         .          .     19:	size   uint64
+         .          .     20:}
+         .          .     21:
+         .          .     22:func newIndex(size int, bufSize int) *index {
+     192MB      192MB     23:	idx := make([][]int, size)
+         .          .     24:	for i := range idx {
+         .          .     25:		idx[i] = make([]int, 0)
+         .          .     26:	}
+         .          .     27:	return &index{
+         .          .     28:		hasher: murmur3.New64(),
+ROUTINE ======================== runtime.main in /usr/local/Cellar/go/1.13.3/libexec/src/runtime/proc.go
+         0   797.67MB (flat, cum)   100% of Total
+         .          .    198:		// A program compiled with -buildmode=c-archive or c-shared
+         .          .    199:		// has a main, but it is not executed.
+         .          .    200:		return
+         .          .    201:	}
+         .          .    202:	fn := main_main // make an indirect call, as the linker doesn't know the address of the main package when laying down the runtime
+         .   797.67MB    203:	fn()
+         .          .    204:	if raceenabled {
+         .          .    205:		racefini()
+         .          .    206:	}
+         .          .    207:
+         .          .    208:	// Make racy client program work: if panicking on
