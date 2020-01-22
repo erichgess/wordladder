@@ -14,7 +14,6 @@ for f in ${files}; do
     fi
 done;
 
-echo "hasGo" ${hasGo}
 if [ ${hasGo} == "NO" ]
 then
     echo "Skipping perf test: no Go files modified"
