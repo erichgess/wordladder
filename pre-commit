@@ -7,6 +7,7 @@ then
 fi
 
 files=`git diff --cached --name-status | awk '{print $2}'`
+hasGo="NO"
 for f in ${files}; do
     if [ ${f: -3} == ".go" ]
     then
@@ -14,7 +15,7 @@ for f in ${files}; do
     fi
 done;
 
-if [ ${hasGo} == "NO" ]
+if [ "${hasGo}" == "NO" ]
 then
     echo "Skipping perf test: no Go files modified"
     exit 0
