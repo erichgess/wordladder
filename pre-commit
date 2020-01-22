@@ -13,6 +13,7 @@ for f in ${files}; do
     fi
 done;
 
+echo "hasGo" ${hasGo}
 if [ hasGo == "NO" ]
 then
     exit 0
