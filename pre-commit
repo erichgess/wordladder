@@ -1,0 +1,26 @@
+#!/bin/sh
+
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+PROFILE_PATH="./profiles/${BRANCH_NAME}/${TIMESTAMP}"
+mkdir -p ${PROFILE_PATH}
+CPU_PROFILE="${PROFILE_PATH}/cpu.prof"
+MEM_PROFILE="${PROFILE_PATH}/mem.prof"
+TRACE_PROFILE="${PROFILE_PATH}/trace.prof"
+go build
+./wordladder --dict ./dicts/million.dict --cpuprofile "${CPU_PROFILE}" --memprofile "${MEM_PROFILE}" --trace "${TRACE_PROFILE}" > /tmp/wordladder.stat
+git add ${CPU_PROFILE}
+git add ${MEM_PROFILE}
+git add ${TRACE_PROFILE}
+
+go tool pprof -list="main.*" --alloc_space wordladder "${MEM_PROFILE}" > "${PROFILE_PATH}/mem.code"
+go tool pprof -disasm="main.*" --alloc_space wordladder "${MEM_PROFILE}" > "${PROFILE_PATH}/mem.asm"
+go tool pprof -list="main.*" wordladder "${CPU_PROFILE}" > "${PROFILE_PATH}/cpu.code"
+go tool pprof -disasm="main.*" wordladder "${CPU_PROFILE}" > "${PROFILE_PATH}/cpu.asm"
+git add "${PROFILE_PATH}/mem.*"
+git add "${PROFILE_PATH}/cpu.*"
+
+printf "\nProfile: %s" "${PROFILE_PATH}" >> /tmp/wordladder.stat
+
+printf "\n\n" >> /tmp/wordladder.stat
+go tool pprof -text --alloc_space wordladder "${MEM_PROFILE}" >> /tmp/wordladder.stat
