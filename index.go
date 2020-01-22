@@ -1,5 +1,10 @@
 package main
 
+/*
+index enables quick look ups of words that are adjacent to a given word.  Where adjacent means that two words
+diff by a single letter.
+*/
+
 import (
 	"hash"
 	"sort"

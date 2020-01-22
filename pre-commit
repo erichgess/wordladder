@@ -1,5 +1,23 @@
 #!/bin/sh
 
+TMP_FILE="/tmp/wordladder.stat"
+rm "${TMP_FILE}"
+
+files=`git diff --cached --name-status | awk '{print $2}'`
+echo ${files}
+hasGo="NO"
+for f in ${files}; do
+    if [ ${f: -3} == ".go" ]
+    then
+        hasGo="YES"
+    fi
+done;
+
+if [ hasGo == "NO" ]
+then
+    exit 0
+fi
+
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 PROFILE_PATH="./profiles/${BRANCH_NAME}/${TIMESTAMP}"
@@ -8,7 +26,7 @@ CPU_PROFILE="${PROFILE_PATH}/cpu.prof"
 MEM_PROFILE="${PROFILE_PATH}/mem.prof"
 TRACE_PROFILE="${PROFILE_PATH}/trace.prof"
 go build
-./wordladder --dict ./dicts/million.dict --cpuprofile "${CPU_PROFILE}" --memprofile "${MEM_PROFILE}" --trace "${TRACE_PROFILE}" > /tmp/wordladder.stat
+./wordladder --dict ./dicts/million.dict --cpuprofile "${CPU_PROFILE}" --memprofile "${MEM_PROFILE}" --trace "${TRACE_PROFILE}" > "${TMP_FILE}"
 git add ${CPU_PROFILE}
 git add ${MEM_PROFILE}
 git add ${TRACE_PROFILE}
@@ -20,7 +38,7 @@ go tool pprof -disasm="main.*" wordladder "${CPU_PROFILE}" > "${PROFILE_PATH}/cp
 git add "${PROFILE_PATH}/mem.*"
 git add "${PROFILE_PATH}/cpu.*"
 
-printf "\nProfile: %s" "${PROFILE_PATH}" >> /tmp/wordladder.stat
+printf "\nProfile: %s" "${PROFILE_PATH}" >> "${TMP_FILE}"
 
 printf "\n\n" >> /tmp/wordladder.stat
-go tool pprof -text --alloc_space wordladder "${MEM_PROFILE}" >> /tmp/wordladder.stat
+go tool pprof -text --alloc_space wordladder "${MEM_PROFILE}" >> "${TMP_FILE}"
