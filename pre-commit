@@ -14,7 +14,7 @@ for f in ${files}; do
 done;
 
 echo "hasGo" ${hasGo}
-if [ hasGo == "NO" ]
+if [ ${hasGo} == "NO" ]
 then
     echo "Stopping"
     exit 0
