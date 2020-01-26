@@ -8,6 +8,8 @@ import (
 
 func Test_Path(t *testing.T) {
 	dict := LoadDictionary("./dicts/words", 10, false, false, "")
+	assert.NotNil(t, dict)
+
 	v1 := dict.Find("cat")
 	v2 := dict.Find("dog")
 	path := dict.Path(v1, v2)
@@ -21,6 +23,8 @@ func Test_Path(t *testing.T) {
 
 func Test_AllPaths(t *testing.T) {
 	dict := LoadDictionary("./dicts/words", 10, false, false, "")
+	assert.NotNil(t, dict)
+
 	v1 := dict.Find("cat")
 	paths := dict.AllPaths(v1)
 	assert.NotNil(t, paths)

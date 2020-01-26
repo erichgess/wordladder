@@ -33,3 +33,16 @@ the commit will fail. Profiler results are save to `./profiles/<branch-name>/<ti
 repo, for a small practice project its fine but a better solution would be to save data to another directory or to something like S3.
 2. `./commit-msg` - This hooks takes the high level results from the performance test run in the `pre-commit`
 and appends them to your comment.
+
+#### Git Hook Setup
+The Git Hooks are not automatically setup, you'll need to add them to your local `.git/` configuration when this repo is cloned.  Do this
+by creating symbolic links from `.git/hooks/.` to the respective hooks.  For example:
+
+```
+cd ./.git/hooks
+ln -s -f ../../commit-msg commit-msg
+ln -s -f ../../pre-commit pre-commit
+```
+
+Using symbolic links means that any changes which are made to the hooks will also be tracked by Git, without having to do any duplicate
+work.
