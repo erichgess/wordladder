@@ -17,12 +17,23 @@ done;
 
 if [ "${hasGo}" == "NO" ]
 then
-    echo "Skipping performance test: no Go files modified"
+    echo "Skipping tests: no Go files modified"
     exit 0
-else
-    echo "Running performance test"
 fi
 
+# Run the unit tests, if any fail, then do not allow the commit to continue
+echo "Running unit tests"
+TEST_RESULTS="/tmp/wordladder_test_results.txt"
+go test ./... > "${TEST_RESULTS}"
+if [ "$?" -ne "0" ]
+then
+    echo "One or more unit tests failed, printing test output below: "
+    cat "${TEST_RESULTS}"
+    exit 1
+fi
+
+# Run wordladder on a large dictionary and profile the performance
+echo "Running performance tests"
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 PROFILE_PATH="./profiles/${BRANCH_NAME}/${TIMESTAMP}"
