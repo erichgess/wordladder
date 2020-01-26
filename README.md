@@ -17,6 +17,14 @@ the graph from the dictionary as fast as possible.
 It also serves as a source of inspiration for creating tools and strategies to help with performance optimization.
 
 ## Setup Notes
+### Performance Investigation
+These files and scripts are related to doing performance investigations.  Doing many runs of Word Ladder while changing a single
+configuration parameter, then collecting metrics in a way that they can be charted in Excel.
+
+1. `bucketPerf.sh` - Runs Word Ladder with increasing number of buckets and captures the performance metrics to a CSV output
+2. `wordladder - analysis.xlsx` - An Excel workbook pulling together different performance tests and breaking them down
+for comparison and analysis.
+
 ### Git Hooks
 One of the biggest challenges of optimization is keeping track of all the small code changes (and large changes) which you make
 and how those impact performance.  To make that easy and consistent, there are two Git Hooks which will automatically run performance
