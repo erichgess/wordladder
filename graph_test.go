@@ -11,7 +11,11 @@ func Test_Path(t *testing.T) {
 	assert.NotNil(t, dict)
 
 	v1 := dict.Find("cat")
+	assert.Equal(t, 9, v1)
+
 	v2 := dict.Find("dog")
+	assert.Equal(t, 0, v2)
+
 	path := dict.Path(v1, v2)
 	assert.NotNil(t, path)
 	assert.Len(t, path, 4)
@@ -26,6 +30,7 @@ func Test_AllPaths(t *testing.T) {
 	assert.NotNil(t, dict)
 
 	v1 := dict.Find("cat")
+	assert.Equal(t, 9, v1)
 	paths := dict.AllPaths(v1)
 	assert.NotNil(t, paths)
 
@@ -35,4 +40,30 @@ func Test_AllPaths(t *testing.T) {
 	assert.Equal(t, "cot", string(dict.vertices[path[1]].word))
 	assert.Equal(t, "cog", string(dict.vertices[path[2]].word))
 	assert.Equal(t, "dog", string(dict.vertices[path[3]].word))
+}
+
+func Test_LongestPath(t *testing.T) {
+	dict := LoadDictionary("./dicts/words", 10, false, false, "")
+	assert.NotNil(t, dict)
+
+	v1 := dict.Find("cat")
+	assert.Equal(t, 9, v1)
+	paths := dict.AllPaths(v1)
+	assert.NotNil(t, paths)
+
+	longest := paths.Longest()
+	assert.NotNil(t, longest)
+
+	assert.Equal(t, "cat", string(dict.vertices[longest[0]].word))
+	assert.Equal(t, "cot", string(dict.vertices[longest[1]].word))
+	assert.Equal(t, "cog", string(dict.vertices[longest[2]].word))
+	assert.Equal(t, "dog", string(dict.vertices[longest[3]].word))
+	assert.Equal(t, "dogs", string(dict.vertices[longest[4]].word))
+}
+
+func Test_WordNotFound(t *testing.T) {
+	dict := LoadDictionary("./dicts/words", 10, false, false, "")
+	assert.NotNil(t, dict)
+
+	assert.Equal(t, -1, dict.Find("nada"))
 }
