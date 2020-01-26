@@ -67,3 +67,35 @@ func Test_WordNotFound(t *testing.T) {
 
 	assert.Equal(t, -1, dict.Find("nada"))
 }
+
+var benchmarkDict *Graph
+
+func Benchmark_Path(b *testing.B) {
+	if benchmarkDict == nil {
+		benchmarkDict = LoadDictionary("./dicts/million.dict", 10000000, false, false, "")
+	}
+
+	v1 := benchmarkDict.Find("cat")
+	v2 := benchmarkDict.Find("dog")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		benchmarkDict.Path(v1, v2)
+	}
+}
+
+func Benchmark_AllPaths(b *testing.B) {
+	if benchmarkDict == nil {
+		benchmarkDict = LoadDictionary("./dicts/million.dict", 10000000, false, false, "")
+	}
+
+	v1 := benchmarkDict.Find("cat")
+	paths := benchmarkDict.AllPaths(v1)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		paths.To("dog")
+	}
+}
