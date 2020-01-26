@@ -1,0 +1,34 @@
+# Word Ladder
+Word Ladder solves the word ladder game: given a dictionary of words and two words from that dictionary (a starting word, `S`, and a destination word, `D`), Word Ladder will attempt to tranform `S` into `D` by changing a single letter at a time, such that, each subsequent word is in the given 
+dictionary.
+
+### Example:
+Starting word is `cat` ending word is `dog`, the sequence would be as follows:
+
+1. `cat`
+2. `cot`
+3. `cog`
+4. `dog`
+
+## Purpose
+The purpose of this project is to be a practice arena for improving performance optimization skills.  The goal is to make creating
+the graph from the dictionary as fast as possible.
+
+It also serves as a source of inspiration for creating tools and strategies to help with performance optimization.
+
+## Setup Notes
+### Git Hooks
+One of the biggest challenges of optimization is keeping track of all the small code changes (and large changes) which you make
+and how those impact performance.  To make that easy and consistent, there are two Git Hooks which will automatically run performance
+tests for any code change make, along with a CPU and Memory Profile, when those changes are committed to Git.  It appends a high level
+performance metric to you commit comment, so you can get a history of every change you made and how it impacted performance simply by
+reading through the Git Log. The hooks also capture CPU and Memory profiles and organizes them within a subdirectory named after the
+current branch and timestamped (the location of profiler data is also appended to each Git commit comment).
+
+The two Git Hooks are:
+
+1. `./pre-commit` - This hook builds the source code and then runs the performance test: save the profiler 
+results to `./profiles/<branch-name>/<timestamp>/<profile data>`.  Performance data is also written to the file
+`/tmp/wordladder.stat` so that the `commit-msg` hook can append that information to your comment.
+2. `./commit-msg` - This hooks takes the high level results from the performance test run in the `pre-commit`
+and appends them to your comment.
