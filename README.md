@@ -29,6 +29,7 @@ The two Git Hooks are:
 
 1. `./pre-commit` (Only runs if a `.go` file has been modified) - This hook builds the source code and then runs the performance test: save the profiler 
 results to `./profiles/<branch-name>/<timestamp>/<profile data>`.  Performance data is also written to the file
-`/tmp/wordladder.stat` so that the `commit-msg` hook can append that information to your comment.
+`/tmp/wordladder.stat` so that the `commit-msg` hook can append that information to your comment.  Note: this saves binary profiling data to the git
+repo, for a small practice project its fine but a better solution would be to save data to another directory or to something like S3.
 2. `./commit-msg` - This hooks takes the high level results from the performance test run in the `pre-commit`
 and appends them to your comment.
