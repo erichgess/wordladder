@@ -12,7 +12,8 @@ Starting word is `cat` ending word is `dog`, the sequence would be as follows:
 
 ## Purpose
 The purpose of this project is to be a practice arena for improving performance optimization skills.  The goal is to make creating
-the graph from the dictionary as fast as possible.
+the graph from the dictionary as fast as possible.  The focus has been on improving the performance of `LoadDictionary`, but, the
+path functions may also be ripe for optimizations.
 
 It also serves as a source of inspiration for creating tools and strategies to help with performance optimization.
 
